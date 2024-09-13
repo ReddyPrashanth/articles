@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Articles | VILT Stack Deployment</title>
+    <link href="./assets/css/tailwind.css" rel="stylesheet" />
+  </head>
+  <body class="text-gray-800">
+    <header class="bg-green-800 p-4 text-white text-center space-y-2">
+      <h1 class="text-4xl font-bold">VILT Stack Deployment</h1>
+      <p>
+        Built with Laravel, Inertia, Vue 3, Tailwind CSS, MYSQL and Laravel
+        Reverb
+      </p>
+      <div class="flex items-center justify-center">
+        <img
+          src="./assets/images/logo.png"
+          class="h-16 border rounded"
+          alt="spice savor logo"
+        />
+      </div>
+    </header>
+
+    <main class="p-8 container mx-auto space-y-2">
+      <section>
+        <h2 class="text-2xl font-semibold mb-4 text-green-700">Introduction</h2>
+        <p>
+          In today’s fast-paced world, online food ordering has become a
+          necessity for restaurants. My Online Food Ordering System is designed
+          to streamline the food ordering process, enabling customers to order
+          their favorite meals directly from the restaurant’s website. This
+          system is built with a clean and intuitive interface, allowing
+          customers to browse menus, customize orders, and pay online with ease.
+          Restaurant owners can manage orders, update menus, and handle
+          deliveries. Today we are going to discuss detailed Laravel application
+          deployment on a standalone ubuntu server.
+        </p>
+      </section>
+
+      <section>
+        <h3 class="text-xl font-semibold mt-6 mb-2 text-green-700">
+          Key Features
+        </h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Responsive design with Tailwind CSS.</li>
+          <li>Real time notifications with Laravel Reverb</li>
+          <li>Online payments with stripe</li>
+          <li>Real time order tracking</li>
+          <li>Menu and Order management</li>
+        </ul>
+      </section>
+      <section>
+        <h3 class="text-xl font-semibold mt-6 mb-2 text-green-700">
+          Software Used
+        </h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Vue 3 and Tailwind CSS for responsive, modern interface.</li>
+          <li>Laravel for robust and scalable server-side implementation.</li>
+          <li>MySQL for handling orders, user accounts and menu data.</li>
+          <li>Stripe API intergration for secure online payments.</li>
+          <li>Docker for local development environment.</li>
+          <li>Deployment on standalone ubuntu server hosted on AWS.</li>
+        </ul>
+      </section>
+      <section class="space-y-4">
+        <h3 class="text-xl font-semibold mt-6 mb-2 text-green-700">
+          Deployment Process
+        </h3>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">Prerequisites</h4>
+          <ul class="list-disc list-inside">
+            <li>Ubuntu v22.04</li>
+            <li>User account with sudo privileges</li>
+            <li>Domain name to use for our application</li>
+          </ul>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">Install Ubuntu Packages</h4>
+          <p>
+            I am using ubuntu server 22.04 to deploy the application. Let's
+            start with installing below ubuntu packages required by the
+            application.
+          </p>
+          <div
+            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
+          >
+            <pre><code class="whitespace-pre text-sm">
+sudo apt update -y
+sudo apt-get install -y curl libpng-dev \
+    libjpeg-dev libfreetype6-dev \
+    libzip-dev zip unzip
+            </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">MySQL Installation</h4>
+          <p>
+            I am using MySQL 8.0 as my database. You can also use PostgreSQL if
+            you like. Below set of instructions help you install MySQL database
+            in no time. We also use database driver for laravel queues.
+          </p>
+          <div
+            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
+          >
+            <pre><code class="whitespace-pre text-sm">
+sudo apt install mysql-server -y
+sudo systemctl start mysql
+sudo systemctl enable mysql
+sudo mysql_secure_installation
+
+# Check status of MySQL using below command
+sudo systemctl status mysql
+
+# Connect to mysql as root using below command.
+sudo mysql
+              </code></pre>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">GIT Installation</h4>
+          <p>
+            I have chosen Github as my code repository. We are going to use Git
+            cli tool to push and pull code from Github. If you are new to Git
+            you can learn git from this
+            <a
+              class="text-green-600 hover:underline"
+              href="https://www.youtube.com/watch?v=8JJ101D3knE"
+              target="_blank"
+              >tutorial</a
+            >
+          </p>
+          <div
+            class="border rounded bg-gray-100 text-gray-500 overflow-scroll px-4"
+          >
+            <pre><code class="whitespace-pre text-sm">
+sudo apt install git -y
+
+# Check git installation using below command
+git --version
+                </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">NGINX Installation</h4>
+          <p>
+            I use NGINX web server for almost all of my applications. In this
+            application I also use NGINX as a reverse procy to setup Laravel
+            reverb. NGINX is a very high performant web server, easy to
+            configure, supports SSL/TLS, used as Reverse Proxy and Load Balancer
+            etc.
+          </p>
+          <div
+            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
+          >
+            <pre><code class="whitespace-pre text-sm">
+sudo apt install nginx -y
+
+# Start nginx web server
+sudo systemctl start nginx
+
+# Enable nginx as a systemd service to start automatically at boot time on a system
+sudo systemctl enable nginx
+
+# Check status of nginx using below command
+sudo systemctl status nginx
+                  </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">PHP Installation</h4>
+          <p>
+            I am using PHP version 8.3. Below php modules are required by the
+            application to work as expected.
+          </p>
+          <div
+            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
+          >
+            <pre><code class="whitespace-pre text-sm">
+sudo apt install php-fpm php-mysql php-cli php-xml \
+        php-mbstring php-curl php-gd php-pdo php-zip pvp-pcntl -y
+
+# Start php fpm service using below command
+sudo systemctl start php8.3-fpm
+
+# Enable php fpm as a systemd service
+sudo systemctl enable php8.3-fpm
+                    </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">Composer Installation</h4>
+          <p>
+            Composer is a dependency manager for PHP. It is required to install
+            our application dependencies.
+          </p>
+          <div
+            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
+          >
+            <pre><code class="whitespace-pre text-sm">
+cd ~
+curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
+HASH=`curl -sS https://composer.github.io/installer.sig`
+php -r 
+    "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } 
+    else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"    
+sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+# Check composer version by running below command
+composer --version
+                      </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">NodeJS Installation</h4>
+          <p>
+            Our application built on Inertia and Vue 3. NodeJS is required to
+            install javascript dependencies and build our front-end code. We are
+            using nvm to install NodeJS
+          </p>
+          <div
+            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
+          >
+            <pre><code class="whitespace-pre text-sm">
+cd ~
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+source ~/.bashrc
+nvm install v22.1.0
+
+# Check node installation by using below command
+node --version
+                        </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">Application Setup</h4>
+          <p>
+            So far we installed all the software components required to get our
+            application up and running. Let setup our application. Application
+            code is hosted in a Github repository
+
+            <a
+              class="text-green-600 hover:underline"
+              href="https://github.com/iamsreepathi/food-ordering-system"
+              target="_blank"
+              >[Here]</a
+            >. Follow along below instructions to finish application setup.
+          </p>
+
+          <div
+            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
+          >
+            <pre><code class="whitespace-pre text-sm">
+# Switch to root user
+sudo su -
+
+# Application home directory
+cd /var/www/html
+
+# Clone app repository located below under home directory
+git clone https://github.com/iamsreepathi/food-ordering-system.git .
+
+# Laravel home directory
+cd src
+
+# Install application dependencies
+composer install --optimize-autoloader --no-dev
+
+# Install javascript dependencies
+npm install
+
+# Copy env file
+# Add database, stripe and reverb connection settings inside .env file after copying
+cp .env.example .env
+
+# Build static assets
+npm run build
+
+# Generate app key
+php artisan key:generate
+
+# Apply database migrations to create required database tables
+php artisan migrate
+            </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">
+            Application Environment File
+          </h4>
+          <p>
+            This section provides an example Laravel application environment I
+            used to to deploy this application. This can be used as a reference
+            for anyone who wants to try this setup. Please replace with your
+            values wherever it's appropriate.
+          </p>
+
+          <div
+            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
+          >
+            <pre><code class="whitespace-pre text-sm">
+APP_NAME="Spice Savor"
+APP_ENV=prod
+APP_KEY="${APP_KEY}"
+APP_DEBUG=true
+APP_TIMEZONE=UTC
+APP_URL="https://${DOMAIN_NAME}"
+
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
+
+APP_MAINTENANCE_DRIVER=file
+APP_MAINTENANCE_STORE=database
+
+BCRYPT_ROUNDS=12
+
+LOG_CHANNEL=stack
+LOG_STACK=single
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE="${DATABASE_NAME}"
+DB_USERNAME="${DATABASE_USERNAME}"
+DB_PASSWORD="${DATABASE_PASSWORD}"
+
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_PATH=/
+SESSION_DOMAIN=null
+
+BROADCAST_CONNECTION=reverb
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=database
+
+CACHE_STORE=database
+CACHE_PREFIX=
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=smtp
+MAIL_HOST=localhost
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="admin@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+VITE_APP_NAME="${APP_NAME}"
+VITE_GOOGLE_MAPS_API_KEY="${GOOGLE_MAPS_API_KEY}"
+
+STRIPE_KEY="${STRIPE_KEY}"
+STRIPE_SECRET="${STRIPE_SECRET}"
+STRIPE_WEBHOOK_SECRET=your-stripe-webhook-secret
+
+REVERB_APP_ID=221435
+REVERB_APP_KEY="${REVERB_APP_KEY}"
+REVERB_APP_SECRET="${REVERB_APP_SECRET}"
+REVERB_HOST="localhost"
+REVERB_PORT=8080
+REVERB_SCHEME=http
+
+VITE_REVERB_APP_KEY="${REVERB_APP_KEY}"
+VITE_REVERB_HOST="${DOMAIN_NAME}"
+VITE_REVERB_PORT=443
+VITE_REVERB_SCHEME="${REVERB_SCHEME}"
+              </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">Laravel File Permissions</h4>
+          <p>
+            From above step all files are owned by root user and will result in
+            permission denied erros when you access the website. To solve this
+            we need to updated laravel file permissions as below. You can use
+            below permissions to any laravel application
+          </p>
+          <div
+            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
+          >
+            <pre><code class="whitespace-pre text-sm">
+# Switch to root user
+sudo su -
+
+# Application home directory
+cd /var/www/html
+
+# Change file permission of laravel files and folders
+chmod 755 -R /var/www/html/src/
+
+# Change file permissions of logs and cache folders
+chmod 775 -R /var/www/html/src/storage/ /var/www/html/src/bootstrap/cache
+
+# Change ownership of code files and folders
+chown -R ubuntu:www-data /var/www/html/src/
+
+# Restart nginx
+systemctl restart nginx
+              </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">Configuration Files</h4>
+          <p>
+            In the next steps we see how to install supervisor and configure our
+            app using NGINX and we need below configuration files. List of
+            configuration files required for our application. These files are
+            hosted on on github and available for download. Download these files
+            over to ubuntu server.
+          </p>
+          <ul class="list-inside list-disc">
+            <li>
+              <a
+                class="text-green-600 hover:underline"
+                href="https://gist.github.com/ReddyPrashanth/e3da1d342d8449687d985b099c3cbf8b"
+                target="_blank"
+                >NGINX</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-green-600 hover:underline"
+                href="https://gist.github.com/ReddyPrashanth/ce8d6a8c3746a9a3e71552b4f8156cc1"
+                target="_blank"
+                >Supervisor</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">Supervisor Installation</h4>
+          <p>
+            In our application we use Laravel reverb and Laravel queues. Laravel
+            Reverb provides scalable real-time WebSocket communication directly
+            to our application. Laravel queues are used to perform long running
+            tasks. Supervisor is a process monitor used to configure laravel
+            reverb and queues.
+          </p>
+          <div
+            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
+          >
+            <pre><code class="whitespace-pre text-sm">
+sudo apt-get install supervisor
+
+# Download supervisord.conf file configuration files section.
+# copy supervisord.conf config to /etc/supercisor/conf.d/supervisord.conf
+# Restart supervisor
+sudo systemctl restart supervisorctl
+
+# Check status of laravel-worker by running below command
+sudo supervisorctl status laravel-worker:
+
+# Check status of laravel-reverb by running below command
+sudo supervisorctl status laravel-reverb:
+
+# Download default nginx configuration file from configuration files section.
+# copy nginx default config to /etc/nginx/sites-available/default
+# Reload nginx to reflect configuration changes
+sudo systemctl reload nginx
+              </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-green-600">SSL Configuration</h4>
+          <p>
+            SSL & TLS are essential for securing communication over the
+            internet. SSL/TLS encrypts data transmitted between client browser
+            and an application server. We use certbot to configure a free SSL
+            certificate.
+          </p>
+          <div
+            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
+          >
+            <pre><code class="whitespace-pre text-sm">
+sudo apt update -y
+sudo apt install certbot python3-certbot-nginx
+
+# Replace with your domain name
+sudo certbot --nginx -d yourdomain.com
+
+# Reload nginx to reflect configuration changes
+sudo systemctl reload nginx
+                </code></pre>
+          </div>
+        </div>
+      </section>
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold mb-4 text-green-700">Conclusion</h2>
+        <p>
+          Deploying a Laravel-based food ordering application using Laravel
+          Reverb, Vue 3, Inertia.js, and Tailwind CSS offers a powerful and
+          modern solution for building dynamic and responsive user interfaces
+          with a seamless full-stack experience. By integrating Vue 3 as the
+          front-end framework via Inertia.js, you can leverage the reactivity
+          and modularity of Vue while maintaining Laravel’s routing and backend
+          capabilities. Tailwind CSS simplifies the styling process, allowing
+          for fast, responsive designs without the need to write extensive
+          custom CSS.
+        </p>
+        <p>
+          Incorporating continuous integration and delivery (CI/CD) pipelines
+          will further streamline updates and new feature releases, ensuring
+          that the application remains scalable, secure, and highly performant
+          as the business grows.
+        </p>
+        <div>
+          <p>For questions and queries please reach via below email</p>
+
+          <div class="flex text-green-600 space-x-2 items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+              />
+            </svg>
+            <a href="mailto:iamsreepathi@gmail.com">Email</a>
+          </div>
+        </div>
+      </section>
+      <section class="space-y-2">
+        <h2 class="text-2xl font-semibold text-green-700">Author</h2>
+        <div>
+          <p>Prashanth Sreepathi</p>
+          <p>
+            <a
+              class="text-green-600 hover:underline"
+              href="mailto:iamsreepathi@gmail.com"
+              >iamsreepathi@gmail.com</a
+            >
+          </p>
+          <p>
+            <a
+              class="text-green-600 hover:underline"
+              href="https://reddyprashanth.github.io/"
+              target="_blank"
+              >visit my portfolio</a
+            >
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-green-800 p-4 text-white text-center">
+      <p>&copy; 2024 spicesavor.github.io</p>
+    </footer>
+  </body>
+</html>
