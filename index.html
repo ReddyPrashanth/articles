@@ -6,24 +6,111 @@
     <title>Articles | VILT Stack Deployment</title>
     <link href="./assets/css/tailwind.css" rel="stylesheet" />
   </head>
-  <body class="text-gray-800">
-    <header class="bg-green-800 p-4 text-white text-center space-y-2">
+  <body class="text-gray-900">
+    <header class="p-4 text-green-700 text-center space-y-2 border-b shadow-sm">
       <h1 class="text-4xl font-bold">VILT Stack Deployment</h1>
-      <p>
-        Built with Laravel, Inertia, Vue 3, Tailwind CSS, MYSQL and Laravel
+      <p class="text-orange-500 font-medium">
+        Built with Laravel, Inertia, Vue 3, Tailwind CSS, MySQL and Laravel
         Reverb
       </p>
-      <div class="flex items-center justify-center">
-        <img
-          src="./assets/images/logo.png"
-          class="h-16 border rounded"
-          alt="spice savor logo"
-        />
-      </div>
     </header>
 
-    <main class="p-8 container mx-auto space-y-2">
-      <section>
+    <main class="p-6 container mx-auto space-y-2">
+      <section class="mb-4">
+        <h2 class="text-2xl font-semibold mb-4 text-green-700">
+          Table Of Contents
+        </h2>
+        <ul class="list-disc list-inside font-medium text-green-600 space-y-1">
+          <li>
+            <a class="hover:underline" href="#introduction">Introduction</a>
+          </li>
+          <li>
+            <a class="hover:underline" href="#key-features">Key Features</a>
+          </li>
+          <li>
+            <a class="hover:underline" href="#software-used">Software Used</a>
+          </li>
+          <li>
+            <a class="hover:underline" href="#deployment-process"
+              >Deployment Process</a
+            >
+            <ul class="list-disc list-inside ml-6 space-y-1">
+              <li class="font-normal">
+                <a class="hover:underline" href="#prerequisites"
+                  >Prerequisites</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#install-ubuntu-packages"
+                  >Install Ubuntu Packages</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#mysql-installation"
+                  >MySQL Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#git-installation"
+                  >Git Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#nginx-installation"
+                  >NGINX Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#php-installation"
+                  >PHP Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#composer-installation"
+                  >Composer Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#nodejs-installation"
+                  >NodeJS Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#application-setup"
+                  >Application Setup</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#application-environment"
+                  >Application Environment</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#laravel-file-permissions"
+                  >Laravel File Permissions</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#configuration-files"
+                  >Configuration Files</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#supervisor-installation"
+                  >Supervisor Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#ssl-configuration"
+                  >SSL Configuration</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li><a class="hover:underline" href="#conclusion">Conslusion</a></li>
+        </ul>
+      </section>
+      <section id="introduction">
         <h2 class="text-2xl font-semibold mb-4 text-green-700">Introduction</h2>
         <p>
           In today’s fast-paced world, online food ordering has become a
@@ -38,8 +125,8 @@
         </p>
       </section>
 
-      <section>
-        <h3 class="text-xl font-semibold mt-6 mb-2 text-green-700">
+      <section id="key-features">
+        <h3 class="text-2xl font-semibold mt-6 mb-4 text-green-700">
           Key Features
         </h3>
         <ul class="list-disc list-inside space-y-1">
@@ -50,8 +137,8 @@
           <li>Menu and Order management</li>
         </ul>
       </section>
-      <section>
-        <h3 class="text-xl font-semibold mt-6 mb-2 text-green-700">
+      <section id="software-used">
+        <h3 class="text-2xl font-semibold mt-6 mb-4 text-green-700">
           Software Used
         </h3>
         <ul class="list-disc list-inside space-y-1">
@@ -63,28 +150,26 @@
           <li>Deployment on standalone ubuntu server hosted on AWS.</li>
         </ul>
       </section>
-      <section class="space-y-4">
-        <h3 class="text-xl font-semibold mt-6 mb-2 text-green-700">
+      <section id="deployment-process" class="space-y-4">
+        <h3 class="text-2xl font-semibold mt-6 mb-4 text-green-700">
           Deployment Process
         </h3>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">Prerequisites</h4>
+        <div id="prerequisites" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Prerequisites</h4>
           <ul class="list-disc list-inside">
             <li>Ubuntu v22.04</li>
             <li>User account with sudo privileges</li>
             <li>Domain name to use for our application</li>
           </ul>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">Install Ubuntu Packages</h4>
+        <div id="install-ubuntu-packages" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Install Ubuntu Packages</h4>
           <p>
             I am using ubuntu server 22.04 to deploy the application. Let's
             start with installing below ubuntu packages required by the
             application.
           </p>
-          <div
-            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 sudo apt update -y
 sudo apt-get install -y curl libpng-dev \
@@ -93,16 +178,14 @@ sudo apt-get install -y curl libpng-dev \
             </code></pre>
           </div>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">MySQL Installation</h4>
+        <div id="mysql-installation" class="space-y-2">
+          <h4 class="font-medium text-orange-500">MySQL Installation</h4>
           <p>
             I am using MySQL 8.0 as my database. You can also use PostgreSQL if
             you like. Below set of instructions help you install MySQL database
             in no time. We also use database driver for laravel queues.
           </p>
-          <div
-            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 sudo apt install mysql-server -y
 sudo systemctl start mysql
@@ -118,8 +201,8 @@ sudo mysql
           </div>
         </div>
 
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">GIT Installation</h4>
+        <div id="git-installation" class="space-y-2">
+          <h4 class="font-medium text-orange-500">GIT Installation</h4>
           <p>
             I have chosen Github as my code repository. We are going to use Git
             cli tool to push and pull code from Github. If you are new to Git
@@ -131,9 +214,7 @@ sudo mysql
               >tutorial</a
             >
           </p>
-          <div
-            class="border rounded bg-gray-100 text-gray-500 overflow-scroll px-4"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 sudo apt install git -y
 
@@ -142,8 +223,8 @@ git --version
                 </code></pre>
           </div>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">NGINX Installation</h4>
+        <div id="nginx-installation" class="space-y-2">
+          <h4 class="font-medium text-orange-500">NGINX Installation</h4>
           <p>
             I use NGINX web server for almost all of my applications. In this
             application I also use NGINX as a reverse procy to setup Laravel
@@ -151,9 +232,7 @@ git --version
             configure, supports SSL/TLS, used as Reverse Proxy and Load Balancer
             etc.
           </p>
-          <div
-            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 sudo apt install nginx -y
 
@@ -168,15 +247,13 @@ sudo systemctl status nginx
                   </code></pre>
           </div>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">PHP Installation</h4>
+        <div id="php-installation" class="space-y-2">
+          <h4 class="font-medium text-orange-500">PHP Installation</h4>
           <p>
             I am using PHP version 8.3. Below php modules are required by the
             application to work as expected.
           </p>
-          <div
-            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 sudo apt install php-fpm php-mysql php-cli php-xml \
         php-mbstring php-curl php-gd php-pdo php-zip pvp-pcntl -y
@@ -189,15 +266,13 @@ sudo systemctl enable php8.3-fpm
                     </code></pre>
           </div>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">Composer Installation</h4>
+        <div id="composer-installation" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Composer Installation</h4>
           <p>
             Composer is a dependency manager for PHP. It is required to install
             our application dependencies.
           </p>
-          <div
-            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 cd ~
 curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
@@ -212,16 +287,14 @@ composer --version
                       </code></pre>
           </div>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">NodeJS Installation</h4>
+        <div id="nodejs-installation" class="space-y-2">
+          <h4 class="font-medium text-orange-500">NodeJS Installation</h4>
           <p>
             Our application built on Inertia and Vue 3. NodeJS is required to
             install javascript dependencies and build our front-end code. We are
             using nvm to install NodeJS
           </p>
-          <div
-            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 cd ~
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
@@ -233,8 +306,8 @@ node --version
                         </code></pre>
           </div>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">Application Setup</h4>
+        <div id="application-setup" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Application Setup</h4>
           <p>
             So far we installed all the software components required to get our
             application up and running. Let setup our application. Application
@@ -248,9 +321,7 @@ node --version
             >. Follow along below instructions to finish application setup.
           </p>
 
-          <div
-            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 # Switch to root user
 sudo su -
@@ -285,10 +356,8 @@ php artisan migrate
             </code></pre>
           </div>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">
-            Application Environment File
-          </h4>
+        <div id="application-environment" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Application Environment</h4>
           <p>
             This section provides an example Laravel application environment I
             used to to deploy this application. This can be used as a reference
@@ -296,9 +365,7 @@ php artisan migrate
             values wherever it's appropriate.
           </p>
 
-          <div
-            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 APP_NAME="Spice Savor"
 APP_ENV=prod
@@ -384,17 +451,15 @@ VITE_REVERB_SCHEME="${REVERB_SCHEME}"
               </code></pre>
           </div>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">Laravel File Permissions</h4>
+        <div id="laravel-file-permissions" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Laravel File Permissions</h4>
           <p>
             From above step all files are owned by root user and will result in
             permission denied erros when you access the website. To solve this
             we need to updated laravel file permissions as below. You can use
             below permissions to any laravel application
           </p>
-          <div
-            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 # Switch to root user
 sudo su -
@@ -416,8 +481,8 @@ systemctl restart nginx
               </code></pre>
           </div>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">Configuration Files</h4>
+        <div id="configuration-files" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Configuration Files</h4>
           <p>
             In the next steps we see how to install supervisor and configure our
             app using NGINX and we need below configuration files. List of
@@ -444,8 +509,8 @@ systemctl restart nginx
             </li>
           </ul>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">Supervisor Installation</h4>
+        <div id="supervisor-installation" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Supervisor Installation</h4>
           <p>
             In our application we use Laravel reverb and Laravel queues. Laravel
             Reverb provides scalable real-time WebSocket communication directly
@@ -453,9 +518,7 @@ systemctl restart nginx
             tasks. Supervisor is a process monitor used to configure laravel
             reverb and queues.
           </p>
-          <div
-            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 sudo apt-get install supervisor
 
@@ -477,17 +540,15 @@ sudo systemctl reload nginx
               </code></pre>
           </div>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-medium text-green-600">SSL Configuration</h4>
+        <div id="ssl-configuration" class="space-y-2">
+          <h4 class="font-medium text-orange-500">SSL Configuration</h4>
           <p>
             SSL & TLS are essential for securing communication over the
             internet. SSL/TLS encrypts data transmitted between client browser
             and an application server. We use certbot to configure a free SSL
             certificate.
           </p>
-          <div
-            class="border rounded bg-gray-100 text-gray-500 px-4 overflow-x-auto"
-          >
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 sudo apt update -y
 sudo apt install certbot python3-certbot-nginx
@@ -501,7 +562,7 @@ sudo systemctl reload nginx
           </div>
         </div>
       </section>
-      <section class="space-y-4">
+      <section id="conclusion" class="space-y-4">
         <h2 class="text-2xl font-semibold mb-4 text-green-700">Conclusion</h2>
         <p>
           Deploying a Laravel-based food ordering application using Laravel
@@ -523,7 +584,9 @@ sudo systemctl reload nginx
         <div>
           <p>For questions and queries please reach via below email</p>
 
-          <div class="flex text-green-600 space-x-2 items-center">
+          <div
+            class="flex text-green-600 space-x-2 items-center hover:underline"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -565,8 +628,10 @@ sudo systemctl reload nginx
       </section>
     </main>
 
-    <footer class="bg-green-800 p-4 text-white text-center">
-      <p>&copy; 2024 spicesavor.github.io</p>
+    <footer class="p-4 text-white text-center border border-t shadow-md">
+      <p class="text-orange-500 font-medium">
+        &copy; 2024 reddyprashanth.github.io
+      </p>
     </footer>
   </body>
 </html>
