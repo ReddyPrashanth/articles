@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Articles | VILT Stack Deployment</title>
+    <link rel="icon" href="./assets/images/favicon.ico" type="image/x-icon" />
+    <link href="./assets/css/tailwind.css" rel="stylesheet" />
+  </head>
+  <body class="text-gray-900">
+    <header class="p-4 text-green-700 text-center space-y-2 border-b shadow-sm">
+      <h1 class="text-4xl font-bold">
+        Efficient Load Testing for Microservices
+      </h1>
+      <p class="text-orange-500 font-medium">
+        A Guide to load testing NestJS microservices with Grafana K6
+      </p>
+    </header>
+
+    <main class="p-6 container mx-auto space-y-2">
+      <!-- <section class="mb-4">
+        <h2 class="text-2xl font-semibold mb-4 text-green-700">
+          Table Of Contents
+        </h2>
+        <ul class="list-disc list-inside font-medium text-green-600 space-y-1">
+          <li>
+            <a class="hover:underline" href="#introduction">Introduction</a>
+          </li>
+          <li>
+            <a class="hover:underline" href="#gallery">Gallery</a>
+          </li>
+          <li>
+            <a class="hover:underline" href="#key-features">Key Features</a>
+          </li>
+          <li>
+            <a class="hover:underline" href="#software-used">Software Used</a>
+          </li>
+          <li>
+            <a class="hover:underline" href="#deployment-process"
+              >Deployment Process</a
+            >
+            <ul class="list-disc list-inside ml-6 space-y-1">
+              <li class="font-normal">
+                <a class="hover:underline" href="#prerequisites"
+                  >Prerequisites</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#install-ubuntu-packages"
+                  >Install Ubuntu Packages</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#mysql-installation"
+                  >MySQL Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#git-installation"
+                  >Git Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#nginx-installation"
+                  >NGINX Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#php-installation"
+                  >PHP Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#composer-installation"
+                  >Composer Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#nodejs-installation"
+                  >NodeJS Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#application-setup"
+                  >Application Setup</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#application-environment"
+                  >Application Environment</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#laravel-file-permissions"
+                  >Laravel File Permissions</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#configuration-files"
+                  >Configuration Files</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#supervisor-installation"
+                  >Supervisor Installation</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#ssl-configuration"
+                  >SSL Configuration</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li><a class="hover:underline" href="#conclusion">Conslusion</a></li>
+        </ul>
+      </section> -->
+      <section id="introduction" class="space-y-4">
+        <h2 class="text-2xl font-semibold text-green-700">Introduction</h2>
+        <p class="text-justify">
+          Load testing NestJS microservices using MySQL and RabbitMQ with
+          Grafana K6 provides valuable insights into the performance,
+          scalability, and reliability of your system under stress. NestJS, a
+          highly modular Node.js framework, efficiently handles microservices
+          with event-driven architectures, where RabbitMQ serves as the message
+          broker for asynchronous task queues and inter-service communication,
+          and MySQL manages relational data storage. Using Grafana K6, a
+          powerful load testing tool, you can simulate real-world traffic,
+          stress-test the microservices, and measure their performance under
+          varying load conditions. By sending concurrent requests to your API
+          endpoints and monitoring message throughput in RabbitMQ, K6 generates
+          detailed performance metrics such as response times, failure rates,
+          and latency. These metrics are visualized in Grafana dashboards,
+          allowing for easy identification of bottlenecks, database query
+          inefficiencies, or RabbitMQ queue backlogs. This load testing process
+          ensures that the NestJS microservices are optimized for handling high
+          traffic and remain resilient during peak loads, providing a smoother
+          user experience and improving the reliability of the system in
+          production.
+        </p>
+      </section>
+
+      <section id="key-features">
+        <h3 class="text-2xl font-semibold mt-6 mb-4 text-green-700">
+          Key Features
+        </h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Database load testing</li>
+          <li>High Concurrency and performance testing.</li>
+          <li>Built-in performance metrics and reporting.</li>
+          <li>Real-time indights with Grafana Integration.</li>
+          <li>Integration with Event-Driven Architectures (RabbitMQ)</li>
+        </ul>
+      </section>
+      <section id="software-used">
+        <h3 class="text-2xl font-semibold mt-6 mb-4 text-green-700">
+          Software Used
+        </h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Grafana K6 for API load testing.</li>
+          <li>Microservices built using NestJS.</li>
+          <li>MySQL database for storing products and inventory.</li>
+          <li>Docker for local development environment.</li>
+          <li>
+            RabbitMQ for message pattern communication between the services.
+          </li>
+        </ul>
+      </section>
+      <section id="deployment-process" class="space-y-4">
+        <h3 class="text-2xl font-semibold mt-6 mb-4 text-green-700">
+          Environment Setup
+        </h3>
+        <div id="prerequisites" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Prerequisites</h4>
+          <ul class="list-disc list-inside">
+            <li>Docker Desktop</li>
+            <li>Node.js v22.1.0</li>
+            <li>Git CLI</li>
+          </ul>
+        </div>
+        <div id="install-ubuntu-packages" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Application Code</h4>
+          <p>
+            I have setup a nestjs microservice application for demonstration
+            purposes. You can download the application code using git repository
+            <a
+              href="https://github.com/ReddyPrashanth/product-inventory/tree/main"
+              class="text-orange-500 hover:underline"
+              >here</a
+            >. Follow below instructions to clone the git repository and install
+            application dependencies.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+git clone https://github.com/ReddyPrashanth/product-inventory.git
+cd product-inventory
+npm install
+            </code></pre>
+          </div>
+        </div>
+        <div id="mysql-installation" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Build Process</h4>
+          <p>
+            Application code contains a docker compose file to start RabbitMQ,
+            MySQL and Grafana K6 containers and a separate Dockerfile for
+            api-gateway, product and inventory service. After installing
+            application dependencies you can start the application using docker
+            compose. Follow below instruction to start the application using
+            Docker.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+cd product-inventory
+
+# Add below env variables into a .env file in root folders
+|------------------------------------|
+# App
+APP_NAME='Product Inventory'
+APP_URL=http://localhost:3000
+APP_ENV=local
+API_GATEWAY_PORT=3000
+
+# Database
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USER=laravel
+DB_PASSWORD=secret
+
+# RabbitMQ
+RABBITMQ_PASS=secret
+RABBITMQ_USER=admin
+RABBITMQ_VHOST=default
+QUEUE_URI='amqp://admin:secret@rabbitmq:5672/default'
+|------------------------------------|
+
+# Copy .env file into src directory
+cp .env src/.env
+
+# Start your services using docker compose
+docker compose up -d
+
+# Check all services are started using below command and healthy
+docker ps
+
+# Additionally you can check logs for each service using below docker compose command in case you run into an issue
+docker compose logs api-gateway
+docker compose logs products
+docker compose logs inventory
+docker compose logs mysql
+docker compose logs rabbitmq
+              </code></pre>
+          </div>
+        </div>
+      </section>
+      <section id="conclusion" class="space-y-4">
+        <h2 class="text-2xl font-semibold mb-4 text-green-700">
+          K6 Script Breakdown
+        </h2>
+        <p>
+          I have created a simple k6 test under
+          <span class="italic text-orange-500 bg-gray-50"
+            >k6/products-list.js</span
+          >
+          and it is used to load test product list api.
+        </p>
+        <div class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            Load test Configuration (Stages)
+          </h4>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  export const options = {
+    stages: [
+      { duration: "15s", target: 20 },
+      { duration: "30s", target: 20 },
+      { duration: "15s", target: 0 },
+    ],
+  };
+            </code></pre>
+          </div>
+          <p>
+            The options object defines the load stages that the application will
+            be subjected to during the test. The stages array specifies how the
+            load will increase and decrease over time:
+          </p>
+          <ul class="list-disc list-inside space-y-2">
+            <li>
+              <span class="font-medium text-orange-500"
+                >First stage (15s): </span
+              >Gradually ramps up the number of virtual users (VUs) to 20 over
+              15 seconds.
+            </li>
+            <li>
+              <span class="font-medium text-orange-500"
+                >Second stage (30s):</span
+              >
+              Keeps the number of VUs constant at 20 for 30 seconds, maintaining
+              a steady load.
+            </li>
+            <li>
+              <span class="font-medium text-orange-500"
+                >Final stage (15s):
+              </span>
+              Gradually decreases the number of VUs back to 0 over 15 seconds,
+              simulating a cooldown period.
+            </li>
+          </ul>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            Test Execution (Main Function)
+          </h4>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  export default function () {
+    const res = http.get("http://api-gateway:3000/api/products");
+    check(res, { "status was 200": (r) => r.status == 200 });
+    sleep(1);
+  }      
+            </code></pre>
+          </div>
+          <ul class="list-disc list-inside space-y-2">
+            <li>
+              <span class="font-medium text-orange-500">HTTP Request: </span>The
+              script sends a GET request to the /api/products endpoint through
+              the API gateway at http://api-gateway:3000. This mirrors how a
+              client would interact with a microservice in production.
+            </li>
+            <li>
+              <span class="font-medium text-orange-500"
+                >Second stage (30s):</span
+              >
+              The check function verifies that the response has a 200 status
+              code (successful request). This ensures that the API is responding
+              correctly under load. If the condition fails, it will be recorded
+              as an error.
+            </li>
+            <li>
+              <span class="font-medium text-orange-500">Simulated Delay: </span>
+              The sleep(1) function introduces a 1-second delay between each
+              virtual user's request. This simulates a real-world scenario where
+              users don't immediately send multiple requests without pauses.
+            </li>
+          </ul>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-orange-500">Test Run</h4>
+          <p>
+            To execute load test using k6 use below docker compose command. By
+            default k6 outputs results to stdout but you can configure k6 to
+            write results to a timeseries database.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+# runs prouct list load test 
+docker compose run --rm -i k6 run products-index.js 
+            </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-orange-500">Test Results</h4>
+          <p>
+            After executing a K6 load test, the tool provides detailed results
+            that give insight into how your NestJS microservices perform under
+            various traffic conditions. Here's a breakdown of the key metrics
+            and how to interpret them.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+
+    /\      |‾‾| /‾‾/   /‾‾/   
+    /\  /  \     |  |/  /   /  /    
+    /  \/    \    |     (   /   ‾‾\  
+  /          \   |  |\  \ |  (‾)  | 
+  / __________ \  |__| \__\ \_____/ .io
+
+    execution: local
+        script: products-index.js
+        output: -
+
+    scenarios: (100.00%) 1 scenario, 20 max VUs, 1m30s max duration (incl. graceful stop):
+              * default: Up to 20 looping VUs for 1m0s over 3 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+
+
+    ✓ status wa 200
+
+    checks.........................: 100.00% ✓ 908       ✗ 0   
+    data_received..................: 362 kB  6.0 kB/s
+    data_sent......................: 85 kB   1.4 kB/s
+    http_req_blocked...............: avg=49.21µs  min=1.78µs  med=6.38µs   max=16.52ms  p(90)=9.35µs   p(95)=11.33µs 
+    http_req_connecting............: avg=24.53µs  min=0s      med=0s       max=4.62ms   p(90)=0s       p(95)=0s      
+    http_req_duration..............: avg=10.76ms  min=3.08ms  med=8.44ms   max=847.87ms p(90)=14.19ms  p(95)=20.82ms 
+      { expected_response:true }...: avg=10.76ms  min=3.08ms  med=8.44ms   max=847.87ms p(90)=14.19ms  p(95)=20.82ms 
+    http_req_failed................: 0.00%   ✓ 0         ✗ 908 
+    http_req_receiving.............: avg=149.86µs min=13.89µs med=127.57µs max=2.76ms   p(90)=234.98µs p(95)=308.89µs
+    http_req_sending...............: avg=41.11µs  min=6.7µs   med=27.18µs  max=2.87ms   p(90)=42.22µs  p(95)=79.34µs 
+    http_req_tls_handshaking.......: avg=0s       min=0s      med=0s       max=0s       p(90)=0s       p(95)=0s      
+    http_req_waiting...............: avg=10.57ms  min=2.99ms  med=8.24ms   max=842.22ms p(90)=14.05ms  p(95)=20.7ms  
+    http_reqs......................: 908     14.971024/s
+    iteration_duration.............: avg=1.01s    min=1s      med=1s       max=1.88s    p(90)=1.01s    p(95)=1.02s   
+    iterations.....................: 908     14.971024/s
+    vus............................: 1       min=1       max=20
+    vus_max........................: 20      min=20      max=20
+
+
+running (1m00.7s), 00/20 VUs, 908 complete and 0 interrupted iterations
+default ✓ [======================================] 00/20 VUs  1m0s
+            </code></pre>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-orange-500">HTTP Request Metrics</h4>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+http_reqs..............: 600  20.00/s
+            </code></pre>
+          </div>
+          <p>
+            This metric tracks the total number of HTTP requests made during the
+            test. In this case, 600 requests were sent to the API over the test
+            duration at a rate of 20 requests per second. A higher request rate
+            indicates the system’s ability to handle more user interactions per
+            second.
+          </p>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-orange-500">Response Time Metrics</h4>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+http_req_duration......: avg=80ms   min=60ms   med=75ms   max=150ms   p(90)=120ms   p(95)=135ms
+            </code></pre>
+          </div>
+          <p>
+            This metric measures the time it took for the server to respond to
+            each HTTP request.
+          </p>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-orange-500">Error Rates</h4>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+checks..................: 600  100.00%            </code></pre>
+          </div>
+          <p>
+            This metric reflects the success rate of validation checks (e.g.,
+            checking that the response status was 200). Here, 100% of the checks
+            passed, meaning all requests returned the expected result.
+          </p>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-orange-500">Virtual User (VU) Metrics</h4>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+vus.....................: 0  min=0 max=20
+vus_max.................: 20
+            </code></pre>
+          </div>
+          <p>
+            This tracks the number of active virtual users at any point in time.
+            The max=20 indicates that the system was tested with 20 concurrent
+            users, while min=0 shows that there were moments with no active
+            users (during ramp-down).
+          </p>
+        </div>
+        <div class="space-y-2">
+          <h4 class="font-medium text-orange-500">Throughput Metrics</h4>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+data_received..........: 100 KB  3.33 KB/s
+data_sent..............: 50 KB   1.67 KB/s 
+            </code></pre>
+          </div>
+          <p>
+            This metric Indicates the total amount of data received by the
+            client during the test (100 KB) and the average rate (3.33 KB/s).
+            Tracks the total data sent from the client to the server (50 KB) and
+            the rate of data transfer (1.67 KB/s).
+          </p>
+        </div>
+      </section>
+      <section id="conclusion" class="space-y-4">
+        <h2 class="text-2xl font-semibold mb-4 text-green-700">Conclusion</h2>
+        <p>
+          The K6 load test results provide valuable insights into the
+          performance and resilience of your NestJS microservices. By analyzing
+          metrics like response times, throughput, and error rates, you can
+          pinpoint bottlenecks and optimize your microservices for better
+          scalability, ensuring they remain stable and responsive under
+          real-world traffic conditions.
+        </p>
+        <div>
+          <p>For questions and queries please reach via below email</p>
+
+          <div
+            class="flex text-green-600 space-x-2 items-center hover:underline"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+              />
+            </svg>
+            <a href="mailto:iamsreepathi@gmail.com">Email</a>
+          </div>
+        </div>
+      </section>
+      <section class="space-y-2">
+        <h2 class="text-2xl font-semibold text-green-700">Author</h2>
+        <div>
+          <p>Prashanth Sreepathi</p>
+          <p>
+            <a
+              class="text-green-600 hover:underline"
+              href="mailto:iamsreepathi@gmail.com"
+              >iamsreepathi@gmail.com</a
+            >
+          </p>
+          <p>
+            <a
+              class="text-green-600 hover:underline"
+              href="https://reddyprashanth.github.io/"
+              target="_blank"
+              >visit my portfolio</a
+            >
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="p-4 text-white text-center border border-t shadow-md">
+      <p class="text-orange-500 font-medium">
+        &copy; 2024 reddyprashanth.github.io
+      </p>
+    </footer>
+  </body>
+</html>
