@@ -3,22 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Articles | VILT Stack Deployment</title>
+    <title>Articles | K6 Load Testing</title>
     <link rel="icon" href="./assets/images/favicon.ico" type="image/x-icon" />
     <link href="./assets/css/tailwind.css" rel="stylesheet" />
   </head>
   <body class="text-gray-900">
     <header class="p-4 text-green-700 text-center space-y-2 border-b shadow-sm">
-      <h1 class="text-4xl font-bold">
-        Efficient Load Testing for Microservices
-      </h1>
+      <h1 class="text-4xl font-bold">K6 Load Testing for Microservices</h1>
       <p class="text-orange-500 font-medium">
         A Guide to load testing NestJS microservices with Grafana K6
       </p>
     </header>
 
     <main class="p-6 container mx-auto space-y-2">
-      <!-- <section class="mb-4">
+      <section class="mb-4">
         <h2 class="text-2xl font-semibold mb-4 text-green-700">
           Table Of Contents
         </h2>
@@ -27,17 +25,14 @@
             <a class="hover:underline" href="#introduction">Introduction</a>
           </li>
           <li>
-            <a class="hover:underline" href="#gallery">Gallery</a>
-          </li>
-          <li>
             <a class="hover:underline" href="#key-features">Key Features</a>
           </li>
           <li>
             <a class="hover:underline" href="#software-used">Software Used</a>
           </li>
           <li>
-            <a class="hover:underline" href="#deployment-process"
-              >Deployment Process</a
+            <a class="hover:underline" href="#environment-setup"
+              >Environment Setup</a
             >
             <ul class="list-disc list-inside ml-6 space-y-1">
               <li class="font-normal">
@@ -46,75 +41,48 @@
                 >
               </li>
               <li class="font-normal">
-                <a class="hover:underline" href="#install-ubuntu-packages"
-                  >Install Ubuntu Packages</a
+                <a class="hover:underline" href="#application-code"
+                  >Application Code</a
                 >
               </li>
               <li class="font-normal">
-                <a class="hover:underline" href="#mysql-installation"
-                  >MySQL Installation</a
-                >
-              </li>
-              <li class="font-normal">
-                <a class="hover:underline" href="#git-installation"
-                  >Git Installation</a
-                >
-              </li>
-              <li class="font-normal">
-                <a class="hover:underline" href="#nginx-installation"
-                  >NGINX Installation</a
-                >
-              </li>
-              <li class="font-normal">
-                <a class="hover:underline" href="#php-installation"
-                  >PHP Installation</a
-                >
-              </li>
-              <li class="font-normal">
-                <a class="hover:underline" href="#composer-installation"
-                  >Composer Installation</a
-                >
-              </li>
-              <li class="font-normal">
-                <a class="hover:underline" href="#nodejs-installation"
-                  >NodeJS Installation</a
-                >
-              </li>
-              <li class="font-normal">
-                <a class="hover:underline" href="#application-setup"
-                  >Application Setup</a
-                >
-              </li>
-              <li class="font-normal">
-                <a class="hover:underline" href="#application-environment"
-                  >Application Environment</a
-                >
-              </li>
-              <li class="font-normal">
-                <a class="hover:underline" href="#laravel-file-permissions"
-                  >Laravel File Permissions</a
-                >
-              </li>
-              <li class="font-normal">
-                <a class="hover:underline" href="#configuration-files"
-                  >Configuration Files</a
-                >
-              </li>
-              <li class="font-normal">
-                <a class="hover:underline" href="#supervisor-installation"
-                  >Supervisor Installation</a
-                >
-              </li>
-              <li class="font-normal">
-                <a class="hover:underline" href="#ssl-configuration"
-                  >SSL Configuration</a
+                <a class="hover:underline" href="#build-process"
+                  >Build Process</a
                 >
               </li>
             </ul>
           </li>
-          <li><a class="hover:underline" href="#conclusion">Conslusion</a></li>
+          <li>
+            <a class="hover:underline" href="#script-breakdown"
+              >Script Breakdown</a
+            >
+            <ul class="list-disc list-inside ml-6 space-y-1">
+              <li class="font-normal">
+                <a
+                  class="hover:underline"
+                  href="#load-test-configuration-stages"
+                  >Load Test Configuration</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#test-execution"
+                  >Test Execution</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#test-run">Test Run</a>
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#test-results">Test Results</a>
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#metrics">Metrics</a>
+              </li>
+            </ul>
+          </li>
+          <li><a class="hover:underline" href="#conclusion">Conclusion</a></li>
         </ul>
-      </section> -->
+      </section>
       <section id="introduction" class="space-y-4">
         <h2 class="text-2xl font-semibold text-green-700">Introduction</h2>
         <p class="text-justify">
@@ -167,7 +135,10 @@
         </ul>
       </section>
       <section id="deployment-process" class="space-y-4">
-        <h3 class="text-2xl font-semibold mt-6 mb-4 text-green-700">
+        <h3
+          id="environment-setup"
+          class="text-2xl font-semibold mt-6 mb-4 text-green-700"
+        >
           Environment Setup
         </h3>
         <div id="prerequisites" class="space-y-2">
@@ -179,7 +150,9 @@
           </ul>
         </div>
         <div id="install-ubuntu-packages" class="space-y-2">
-          <h4 class="font-medium text-orange-500">Application Code</h4>
+          <h4 id="application-code" class="font-medium text-orange-500">
+            Application Code
+          </h4>
           <p>
             I have setup a nestjs microservice application for demonstration
             purposes. You can download the application code using git repository
@@ -199,7 +172,9 @@ npm install
           </div>
         </div>
         <div id="mysql-installation" class="space-y-2">
-          <h4 class="font-medium text-orange-500">Build Process</h4>
+          <h4 id="build-process" class="font-medium text-orange-500">
+            Build Process
+          </h4>
           <p>
             Application code contains a docker compose file to start RabbitMQ,
             MySQL and Grafana K6 containers and a separate Dockerfile for
@@ -253,8 +228,11 @@ docker compose logs rabbitmq
           </div>
         </div>
       </section>
-      <section id="conclusion" class="space-y-4">
-        <h2 class="text-2xl font-semibold mb-4 text-green-700">
+      <section id="script-breakdown" class="space-y-4">
+        <h2
+          id="script-breakdown"
+          class="text-2xl font-semibold mb-4 text-green-700"
+        >
           K6 Script Breakdown
         </h2>
         <p>
@@ -265,7 +243,10 @@ docker compose logs rabbitmq
           and it is used to load test product list api.
         </p>
         <div class="space-y-2">
-          <h4 class="font-medium text-orange-500">
+          <h4
+            id="load-test-configuration-stages"
+            class="font-medium text-orange-500"
+          >
             Load test Configuration (Stages)
           </h4>
           <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
@@ -308,7 +289,7 @@ docker compose logs rabbitmq
           </ul>
         </div>
         <div class="space-y-2">
-          <h4 class="font-medium text-orange-500">
+          <h4 id="test-execution" class="font-medium text-orange-500">
             Test Execution (Main Function)
           </h4>
           <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
@@ -345,7 +326,7 @@ docker compose logs rabbitmq
           </ul>
         </div>
         <div class="space-y-2">
-          <h4 class="font-medium text-orange-500">Test Run</h4>
+          <h4 id="test-run" class="font-medium text-orange-500">Test Run</h4>
           <p>
             To execute load test using k6 use below docker compose command. By
             default k6 outputs results to stdout but you can configure k6 to
@@ -359,7 +340,9 @@ docker compose run --rm -i k6 run products-index.js
           </div>
         </div>
         <div class="space-y-2">
-          <h4 class="font-medium text-orange-500">Test Results</h4>
+          <h4 id="test-results" class="font-medium text-orange-500">
+            Test Results
+          </h4>
           <p>
             After executing a K6 load test, the tool provides detailed results
             that give insight into how your NestJS microservices perform under
@@ -410,7 +393,9 @@ default ✓ [======================================] 00/20 VUs  1m0s
           </div>
         </div>
         <div class="space-y-2">
-          <h4 class="font-medium text-orange-500">HTTP Request Metrics</h4>
+          <h4 id="metrics" class="font-medium text-orange-500">
+            HTTP Request Metrics
+          </h4>
           <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
 http_reqs..............: 600  20.00/s
