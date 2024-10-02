@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Articles | Laravel CI/CD Setup</title>
+    <link rel="icon" href="./assets/images/favicon.ico" type="image/x-icon" />
+    <link href="./assets/css/tailwind.css" rel="stylesheet" />
+  </head>
+  <body class="text-gray-900 text-justify">
+    <header class="p-4 text-green-700 text-center space-y-2 border-b shadow-sm">
+      <h1 class="text-4xl font-bold">
+        Complete CI/CD Setup for a Laravel Application
+      </h1>
+      <p class="text-orange-500 font-medium">
+        Built with Laravel, Pest, Docker, MariaDB and GitLab
+      </p>
+    </header>
+
+    <main class="p-6 container mx-auto space-y-2">
+      <section class="mb-4">
+        <h2 class="text-2xl font-semibold mb-4 text-green-700">
+          Table Of Contents
+        </h2>
+        <ul class="list-disc list-inside font-medium text-green-600 space-y-1">
+          <li>
+            <a class="hover:underline" href="#introduction">Introduction</a>
+          </li>
+          <li>
+            <a class="hover:underline" href="#cicd-setup">CI / CD Setup</a>
+            <ul class="list-disc list-inside ml-6 space-y-1">
+              <li class="font-normal">
+                <a class="hover:underline" href="#prerequisites"
+                  >Prerequisites</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#code-setup">Code Setup</a>
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#application-dockerfile"
+                  >Application Dockerfile</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#testing-environment"
+                  >Testing Environment</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#docker-compose-configuration"
+                  >Docker Compose Configuration File</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#application-tests"
+                  >Run Application Tests</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#code-quality-stage"
+                  >Code Quality Stage</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#cicd-pipeline"
+                  >CI / CD Pipeline</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#build-stage">Build Stage</a>
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#test-stage">Test Stage</a>
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#deploy-stage">Deploy Stage</a>
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#code-quality"
+                  >Code Quality Report</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a class="hover:underline" href="#deployment-setup"
+              >Deployment Setup</a
+            >
+            <ul class="list-disc list-inside ml-6 space-y-1">
+              <li class="font-normal">
+                <a class="hover:underline" href="#ssh-access">SSH Access</a>
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#generate-ssh-key"
+                  >Generate SSH key</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#copy-ssh-key">Copy SSH Key</a>
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#cicd-variables"
+                  >GitLab CI / CD Variables
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li><a class="hover:underline" href="#conclusion">Conclusion</a></li>
+        </ul>
+      </section>
+      <section id="introduction" class="space-y-4">
+        <h2 class="text-2xl font-semibold text-green-700">Introduction</h2>
+        <p>
+          In this guide, we'll walk through setting up a CI/CD pipeline for a
+          Laravel application using Docker Compose and GitLab CI/CD. This setup
+          ensures that your Laravel app is tested, built, and deployed
+          automatically, making the development and deployment process smoother
+          and more efficient.
+        </p>
+        <p>This article will cover:</p>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Setting up a Laravel application with Docker Compose</li>
+          <li>Writing a GitLab CI/CD pipeline configuration file</li>
+          <li>Running unit tests using Pest or PHPUnit</li>
+          <li>Code quality checks using PHP CodeSniffer (PHP-CS)</li>
+          <li>
+            Building and deploying the application to a production environment
+            on an Ubuntu server.
+          </li>
+        </ul>
+      </section>
+      <section id="cicd-setup" class="space-y-4">
+        <h3 class="text-2xl font-semibold mt-6 mb-4 text-green-700">
+          Laravel CI/CD Setup
+        </h3>
+        <div id="prerequisites" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Prerequisites</h4>
+          <ul class="list-disc list-inside space-y-1">
+            <li>
+              A GitLab account with a GitLab project for your Laravel app.
+            </li>
+            <li>Docker and Docker Compose installed on your local machine.</li>
+            <li>An Ubuntu server with Docker installed for deployment.</li>
+            <li>Basic understanding of Git, Laravel, and CI/CD concepts.</li>
+          </ul>
+        </div>
+        <div id="code-setup" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Code Setup</h4>
+          <p>
+            All the code for this demo is available in the GitLab code
+            repository
+            <a
+              href="https://gitlab.com/laravel8634240/laravel-cicd.git"
+              target="_blank"
+              class="text-orange-500 hover:underline"
+              >here</a
+            >. Clone the repository by using below command.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  # clone git repository
+  git clone https://gitlab.com/laravel8634240/laravel-cicd.git 
+  cd laravel-cicd
+            </code></pre>
+          </div>
+        </div>
+        <div id="application-dockerfile" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Dockerize Laravel</h4>
+          <p>
+            There is a
+            <span
+              class="text-sm font-semibold text-gray-600 bg-gray-100 p-1 rounded"
+              >php.dockerfile</span
+            >
+            in the root of your project folder to define the Docker environment
+            for your application:
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  # Base image with PHP and Apache
+  FROM php:8-apache
+  
+  # Install system dependencies and PHP extensions
+  RUN apt-get update && apt-get install -y \
+      # git \
+      curl \
+      libpng-dev \
+      libjpeg-dev \
+      libfreetype6-dev \
+      libzip-dev \
+      zip \
+      unzip \
+      supervisor \
+      && docker-php-ext-configure gd --with-freetype --with-jpeg \
+      && docker-php-ext-install gd bcmath pdo pdo_mysql zip
+  
+  # Install pcov for for laravel test coverage
+  RUN pecl install pcov && \
+      docker-php-ext-enable pcov
+  
+  # Enable Apache modules
+  RUN a2enmod rewrite
+  
+  # Set working directory
+  WORKDIR /var/www/html
+  
+  # Copy existing application directory contents
+  COPY ./src .
+  
+  # Install Composer
+  COPY --from=composer /usr/bin/composer /usr/bin/composer
+  
+  # Copy custom Apache virtual host configuration
+  COPY conf/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+  
+  # Expose port 80
+  EXPOSE 80
+  
+  # Start Apache in the foreground
+  CMD ["apache2-foreground"]
+            </code></pre>
+          </div>
+        </div>
+        <div id="testing-environment" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Testing Environment</h4>
+          <p>
+            There is a
+            <span
+              class="text-sm font-semibold text-gray-600 bg-gray-100 p-1 rounded"
+              >.env.ci</span
+            >
+            file in the root of your project folder which is used for build, and
+            test stages in the ci / cd pipeline. For deployment use a .env file
+            with production related environment configuration.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  APP_NAME=Laravel
+  APP_ENV=testing
+  APP_KEY=base64:qdJvOICvhVcM4GC5zRplZhP50lC2PJAEbXrEFAAFOdQ=
+  APP_DEBUG=true
+  APP_TIMEZONE=UTC
+  APP_URL=http://localhost
+  
+  APP_LOCALE=en
+  APP_FALLBACK_LOCALE=en
+  APP_FAKER_LOCALE=en_US
+  
+  APP_MAINTENANCE_DRIVER=file
+  # APP_MAINTENANCE_STORE=database
+  
+  BCRYPT_ROUNDS=12
+  
+  LOG_CHANNEL=stack
+  LOG_STACK=single
+  LOG_DEPRECATIONS_CHANNEL=null
+  LOG_LEVEL=debug
+  
+  DB_CONNECTION=mysql
+  DB_HOST=mysql
+  DB_PORT=3306
+  DB_DATABASE=laravel
+  DB_USERNAME=laravel
+  DB_PASSWORD=secret
+  
+  SESSION_DRIVER=database
+  SESSION_LIFETIME=120
+  SESSION_ENCRYPT=false
+  SESSION_PATH=/
+  SESSION_DOMAIN=null
+  
+  BROADCAST_CONNECTION=log
+  FILESYSTEM_DISK=local
+  QUEUE_CONNECTION=database
+  
+  CACHE_STORE=database
+  CACHE_PREFIX=
+  
+  MEMCACHED_HOST=127.0.0.1
+  
+  REDIS_CLIENT=phpredis
+  REDIS_HOST=127.0.0.1
+  REDIS_PASSWORD=null
+  REDIS_PORT=6379
+  
+  MAIL_MAILER=log
+  MAIL_HOST=127.0.0.1
+  MAIL_PORT=2525
+  MAIL_USERNAME=null
+  MAIL_PASSWORD=null
+  MAIL_ENCRYPTION=null
+  MAIL_FROM_ADDRESS="hello@example.com"
+  MAIL_FROM_NAME="${APP_NAME}"
+  
+  AWS_ACCESS_KEY_ID=
+  AWS_SECRET_ACCESS_KEY=
+  AWS_DEFAULT_REGION=us-east-1
+  AWS_BUCKET=
+  AWS_USE_PATH_STYLE_ENDPOINT=false
+  
+  VITE_APP_NAME="${APP_NAME}"
+  
+            </code></pre>
+          </div>
+        </div>
+        <div id="docker-compose-configuration" class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            Docker Compose Configuration
+          </h4>
+          <p>
+            A docker-compose.yml file that sets up the services (Laravel,
+            MariaDB, Apache) is present in the project root folder. This file is
+            used by the docker to spun up mariadb and laravel services.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  x-app-environment: &appEnvironment
+    APP_NAME: ${APP_NAME}
+    APP_URL: ${APP_URL}
+    APP_KEY: ${APP_KEY}
+    APP_DEBUG: ${APP_DEBUG}
+    APP_ENV: ${APP_ENV}
+    DB_CONNECTION: ${DB_CONNECTION}
+    DB_HOST: ${DB_HOST}
+    DB_PORT: ${DB_PORT}
+    DB_DATABASE: ${DB_DATABASE}
+    DB_USERNAME: ${DB_USERNAME}
+    DB_PASSWORD: ${DB_PASSWORD}
+    SESSION_DRIVER: ${SESSION_DRIVER}
+    SESSION_LIFETIME: ${SESSION_LIFETIME}
+    SESSION_ENCRYPT: ${SESSION_ENCRYPT}
+    SESSION_PATH: ${SESSION_PATH}
+    SESSION_DOMAIN: ${SESSION_DOMAIN}
+    BROADCAST_CONNECTION: ${BROADCAST_CONNECTION}
+    FILESYSTEM_DISK: ${FILESYSTEM_DISK}
+    QUEUE_CONNECTION: ${QUEUE_CONNECTION}
+
+  x-database-environment: &databaseEnvironment
+    MYSQL_DATABASE: ${DB_DATABASE}
+    MYSQL_USER: ${DB_USERNAME}
+    MYSQL_PASSWORD: ${DB_PASSWORD}
+    MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    SERVICE_TAGS: dev
+    SERVICE_NAME: mysql
+
+  networks:
+    cicd:
+
+  volumes:
+    db_data:
+      driver: local
+
+  services:
+    mysql:
+      image: mariadb:10.6
+      restart: unless-stopped
+      tty: true
+      ports:
+        - "3307:3306"
+      healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+        interval: 10s
+        timeout: 10s
+        retries: 3
+      environment:
+        <<: [*databaseEnvironment]
+      volumes:
+        - db_data:/var/lib/mysql
+      networks:
+        - cicd
+
+    app:
+      build:
+        context: .
+        dockerfile: php.dockerfile
+        cache_from:
+          - registry.gitlab.com/laravel8634240/laravel-cicd/app:latest
+      image: registry.gitlab.com/laravel8634240/laravel-cicd/app:latest
+      ports:
+        - "80:80"
+      volumes:
+        - ./src:/var/www/html:delegated
+      networks:
+        - cicd
+      depends_on:
+        mysql:
+          condition: service_healthy
+      environment:
+        <<: [*appEnvironment]   
+              </code></pre>
+          </div>
+          <p>
+            Apache configuration file
+            <span
+              class="text-sm font-semibold text-gray-600 bg-gray-100 p-1 rounded"
+              >conf/apache/000-default.conf</span
+            >
+            file for configuring the Apache web server is present in the root
+            folder:
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  &lt;VirtualHost *:80&gt;
+      ServerAdmin webmaster@localhost
+      DocumentRoot /var/www/html/public
+
+      &lt;Directory /var/www/html/public&gt;
+          Options Indexes FollowSymLinks
+          AllowOverride All
+          Require all granted
+      &lt;/Directory&gt;
+
+      ErrorLog ${APACHE_LOG_DIR}/error.log
+      CustomLog ${APACHE_LOG_DIR}/access.log combined
+  &lt;/VirtualHost&gt;
+              </code></pre>
+          </div>
+          <p>
+            Start the laravel and mariadb services using below set of docker
+            commands.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  # Install laravel dependencies
+  docker run --rm -v $PWD/src:/app composer install --optimize-autoloader --prefer-dist --no-scripts
+  cp .env.ci .env
+  docker compose up -d
+
+  # Migrate database tables
+  docker compose exec app php artisan migrate
+              </code></pre>
+          </div>
+        </div>
+        <div id="application-tests" class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            Application Tests using Pest
+          </h4>
+          <p>
+            Pest is a modern testing framework for PHP, specifically designed
+            for simplicity, expressiveness, and minimalism. It offers a clean
+            and concise syntax, making it an excellent choice for developers who
+            want to write tests that are easy to read and maintain.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  docker compose exec app php artisan test --no-ansi
+
+  # Unit Test results
+  PASS  Tests\Unit\ExampleTest
+  ✓ it should be true                                                                                                                   0.08s  
+
+   PASS  Tests\Feature\HomeTest
+  ✓ it has home page                                                                                                                    1.08s  
+
+   PASS  Tests\Feature\TodoApiTest
+  ✓ it can list todos                                                                                                                   0.93s  
+  ✓ it can show a todo                                                                                                                  0.06s  
+  ✓ create todo → it should have a description                                                                                          0.10s  
+  ✓ create todo → it should have a title                                                                                                0.04s  
+  ✓ create todo → it can create a todo                                                                                                  0.04s  
+  ✓ it can update a todo                                                                                                                0.17s  
+  ✓ it can delete a todo                                                                                                                0.07s  
+
+  Tests:    9 passed (18 assertions)
+  Duration: 3.55s
+                  </code></pre>
+          </div>
+        </div>
+        <div id="code-quality" class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            PHP CodeSniffer for Code Quality
+          </h4>
+          <p>
+            PHP CodeSniffer is a PHP tool that helps detect and enforce coding
+            standards in PHP, JavaScript, and CSS codebases. It scans your code
+            to ensure that it follows specific predefined coding standards and
+            best practices, helping maintain clean, consistent, and error-free
+            code.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  docker compose exec app ./vendor/bin/phpcs --no-colors --standard=phpcs.xml
+                    </code></pre>
+          </div>
+        </div>
+        <div id="cicd-pipeline" class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            GitLab CI/CD Pipeline for Laravel
+          </h4>
+          <p>
+            The GitLab CI/CD pipeline will automate testing, building, and
+            deploying your application. A
+            <span class="bg-gray-100 text-sm font-semibold p-1 rounded"
+              >.gitlab-ci.yml</span
+            >
+            file in the root folder defines build, test, quality and deploy
+            stages:
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  default:
+    image: docker:latest
+    services:
+      - docker:dind
+    before_script:
+      - echo "$CI_REGISTRY_PASSWORD" | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
+  
+  variables:
+    DOCKER_DRIVER: overlay2
+    MYSQL_DATABASE: laravel
+    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_USER: laravel
+    MYSQL_PASSWORD: secret
+    TEST_DB_HOST: mysql
+    TEST_DB_PORT: 3306
+    IMAGE: $CI_REGISTRY_IMAGE/app:latest
+  
+  stages:
+    - build
+    - test
+    - quality
+    - deploy
+  # 1. Build Docker Image for Laravel
+  build:
+    stage: build
+    script:
+      # pull docker image if available from registry
+      - docker pull $IMAGE || true
+      # install laravel dependencies
+      - docker run --rm -v $PWD/src:/app composer install --optimize-autoloader --prefer-dist --no-scripts
+      # build application docker image
+      - docker build -f php.dockerfile --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $IMAGE --tag $CI_REGISTRY_IMAGE/app:$CI_COMMIT_SHA --tag $IMAGE .
+      # push docker images to registry
+      - docker push $IMAGE
+      - docker push $CI_REGISTRY_IMAGE/app:$CI_COMMIT_SHA
+    only:
+      - main
+    cache:
+      key: ${CI_COMMIT_REF_SLUG}-composer
+      # cache vendor folders to use in next pipeline stages
+      paths:
+        - src/vendor/
+      policy: push
+  # 2. Run Unit Tests
+  test:
+    stage: test
+    script:
+      # copy testing env
+      - cp .env.ci .env
+      - docker pull $IMAGE
+      # run laravel and mariadb services
+      - docker compose up -d
+      # migrate database tables
+      - docker compose exec app php artisan migrate
+      # run application unit and feature tests
+      - docker compose exec app php artisan test --no-ansi
+    only:
+      - main
+    artifacts:
+      # save unit test coverage report as an artifact
+      paths:
+        - src/coverage.txt
+    cache:
+      policy: pull
+      key: ${CI_COMMIT_REF_SLUG}-composer
+      paths:
+        - src/vendor/
+  # 3. Check Code Quality with PHP_CodeSniffer
+  code_quality:
+    stage: quality
+    script:
+      - cp .env.ci .env
+      - docker pull $IMAGE
+      - docker compose up -d
+      # generate code quality report
+      - docker compose exec app ./vendor/bin/phpcs --no-colors --standard=phpcs.xml
+    only:
+      - main
+    cache:
+      policy: pull
+      key: ${CI_COMMIT_REF_SLUG}-composer
+      paths:
+        - src/vendor/
+  # 5. Deploy to Ubuntu Server
+  deploy:
+    stage: deploy
+    environment:
+      name: production
+      url: https://your-app-domain.com
+    script:
+      - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
+      - eval $(ssh-agent -s)
+      - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+      - mkdir -p ~/.ssh
+      - chmod 700 ~/.ssh
+      - ssh-keyscan $PRODUCTION_IP >> ~/.ssh/known_hosts
+      # ssh into deployment server and pull latest tag and start the application container
+      - ssh ubuntu@$PRODUCTION_IP
+        "docker pull $IMAGE && (docker stop app || true) &&  (docker rm app || true) && docker run -d --name app --env-file ~/app/.env --network prod -p 80:80 $IMAGE"
+    only:
+      - main
+    when: manual
+                </code></pre>
+          </div>
+        </div>
+        <div id="build-stage" class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            Build Stage: Building the Docker Image
+          </h4>
+          <p>
+            The first step in the pipeline is to build a Docker image for the
+            Laravel application.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  build:
+    stage: build
+    script:
+      # pull docker image if available from registry
+      - docker pull $IMAGE || true
+      # install laravel dependencies
+      - docker run --rm -v $PWD/src:/app composer install --optimize-autoloader --prefer-dist --no-scripts
+      # build application docker image
+      - docker build -f php.dockerfile --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $IMAGE --tag $CI_REGISTRY_IMAGE/app:$CI_COMMIT_SHA --tag $IMAGE .
+      # push docker images to registry
+      - docker push $IMAGE
+      - docker push $CI_REGISTRY_IMAGE/app:$CI_COMMIT_SHA
+                </code></pre>
+          </div>
+          <ul class="list-disc list-inside space-y-1">
+            <li>
+              The build stage is responsible for installing Laravel dependencies
+              and creating the Docker image of the Laravel application.
+            </li>
+            <li>
+              t first attempts to pull an existing image from the Docker
+              registry to speed up the process. If unavailable, it proceeds by
+              running composer install to install the required dependencies.
+              Afterward, the Docker image is built using a specified Dockerfile,
+              tagged with both the latest commit SHA and a predefined image
+              name, and finally, pushed to the container registry for further
+              stages.
+            </li>
+            <li>Composer dependencies are cached to speed up future builds.</li>
+          </ul>
+        </div>
+        <div id="test-stage" class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            Test Stage: Running Unit and Feature Tests
+          </h4>
+          <p>
+            Once the application image is built, the next step is to test the
+            application.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  test:
+    stage: test
+    script:
+      # copy testing env
+      - cp .env.ci .env
+      - docker pull $IMAGE
+      # run laravel and mariadb services
+      - docker compose up -d
+      # migrate database tables
+      - docker compose exec app php artisan migrate
+      # run application unit and feature tests
+      - docker compose exec app php artisan test --no-ansi
+                </code></pre>
+          </div>
+          <ul class="list-disc list-inside space-y-1">
+            <li>
+              This stage runs the application’s unit and feature tests to ensure
+              the code is functioning as expected.
+            </li>
+            <li>
+              The .env.ci environment file is copied, and the previously built
+              Docker image is pulled. Docker Compose is used to run the Laravel
+              and MariaDB services. Before testing, the database tables are
+              migrated, and the php artisan test command is executed to run the
+              application’s tests.
+            </li>
+            <li>
+              Test coverage reports are stored as artifacts for future
+              reference.
+            </li>
+          </ul>
+        </div>
+        <div id="code-quality-stage" class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            Code Quality Stage: Analyzing Code Quality with PHP_CodeSniffer
+          </h4>
+          <p>
+            Next, the pipeline checks the quality of the code using
+            PHP_CodeSniffer.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  code_quality:
+    stage: quality
+    script:
+      - cp .env.ci .env
+      - docker pull $IMAGE
+      - docker compose up -d
+      # generate code quality report
+      - docker compose exec app ./vendor/bin/phpcs --no-colors --standard=phpcs.xml
+                </code></pre>
+          </div>
+          <ul class="list-disc list-inside space-y-1">
+            <li>
+              This stage ensures that the code follows the predefined coding
+              standards and guidelines.
+            </li>
+            <li>
+              Using PHP_CodeSniffer, a code quality report is generated based on
+              the rules specified in the phpcs.xml file. This helps in
+              identifying coding issues or inconsistencies before deploying to
+              production.
+            </li>
+          </ul>
+        </div>
+        <div id="deploy-stage" class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            Deploy Stage: Deploying to Production
+          </h4>
+          <p>
+            Finally, the deployment stage handles pushing the application to the
+            production environment.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  deploy:
+    stage: deploy
+    environment:
+      name: production
+      url: https://your-app-domain.com
+    script:
+      - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
+      - eval $(ssh-agent -s)
+      - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+      - mkdir -p ~/.ssh
+      - chmod 700 ~/.ssh
+      - ssh-keyscan $PRODUCTION_IP >> ~/.ssh/known_hosts
+      # ssh into deployment server and pull latest tag and start the application container
+      - ssh ubuntu@$PRODUCTION_IP
+        "docker pull $IMAGE && (docker stop app || true) && (docker rm app || true) && docker run -d --name app --env-file ~/app/.env --network prod -p 80:80 $IMAGE"
+    only:
+      - main
+    when: manual
+            
+                </code></pre>
+          </div>
+          <ul class="list-disc list-inside space-y-1">
+            <li>
+              The final stage is to deploy the application on an Ubuntu server.
+            </li>
+            <li>
+              SSH is used to log into the remote Ubuntu production server. The
+              application’s Docker image is pulled, and any existing containers
+              are stopped and removed. A new container is then launched using
+              the pulled image. The Laravel application runs in the new Docker
+              container and is served via port 80.
+            </li>
+            <li>
+              This step is triggered manually after successful testing and code
+              quality checks.
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section id="deployment-setup" class="space-y-4">
+        <h2 class="text-2xl font-semibold mb-4 text-green-700">
+          Deployment Setup
+        </h2>
+        <p>
+          To deploy your Docker image to the Ubuntu server, ensure you have
+          Docker installed and set up SSH access from GitLab to the server.
+        </p>
+        <div id="ssh-access" class="space-y-2">
+          <h4 class="font-medium text-orange-500">SSH Access</h4>
+          <p>
+            Make sure you have ubuntu server ready and able to SSH into the
+            server. You can use below command to SSH into ubuntu server.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  # SSH into ubuntu server
+  ssh ubuntu@{SERVER_IP_ADDRESS}
+            </code></pre>
+          </div>
+        </div>
+        <div id="generate-ssh-key" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Generate SSH Key</h4>
+          <p>
+            Run the following command to generate a new SSH key pair if you
+            don't have one. Make sure you don't setup a passphrase while
+            creating one.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  # SSH into ubuntu server
+  ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+            </code></pre>
+          </div>
+          <ul class="list-inside list-disc space-y-1">
+            <li>-t rsa specifies the type of key to create (RSA).</li>
+            <li>
+              -b 4096 specifies the number of bits in the key (4096 bits for
+              better security).
+            </li>
+            <li>-C adds a label to the key (usually your email).</li>
+          </ul>
+          <p>
+            When prompted, you can press Enter to accept the default file
+            location (usually ~/.ssh/id_rsa). If you want to create a different
+            name, specify it here.
+          </p>
+        </div>
+        <div id="copy-ssh-key" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Copy SSH Private Key</h4>
+          <p>
+            Now, you need to copy the private key to your clipboard. Run the
+            following command:
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  cat ~/.ssh/id_rsa
+            </code></pre>
+          </div>
+        </div>
+        <div id="cicd-variables" class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            Add the SSH Key and Server IP Address to GitLab
+          </h4>
+          <ul class="list-disc list-inside space-y-1">
+            <li>Log in to your GitLab account.</li>
+            <li>Navigate to your GitLab project.</li>
+            <li>
+              Got to
+              <span class="text-sm font-semibold">Settings > CI / CD</span>.
+            </li>
+            <li>Expand the Variables section.</li>
+            <li>
+              Add variable
+              <span class="font-semibold text-sm">SSH_PRIVATE_KEY</span>.
+            </li>
+            <li>
+              Paste the contents of your private key (id_rsa) into the Value
+              field.
+            </li>
+            <li>Click Add variable.</li>
+            <li>
+              Add variable
+              <span class="font-semibold text-sm">PRODUCTION_IP</span>.
+            </li>
+            <li>
+              Select masked and hidden option to mask the value while running
+              the pipeline.
+            </li>
+            <li>Paste the Ip Address into the Value field.</li>
+            <li>Click Add variable.</li>
+          </ul>
+        </div>
+      </section>
+      <section id="conclusion" class="space-y-4">
+        <h2 class="text-2xl font-semibold mb-4 text-green-700">Conclusion</h2>
+        <p>
+          In conclusion, setting up a CI/CD pipeline for a Laravel application
+          using Docker on an Ubuntu server streamlines the development and
+          deployment process, ensuring consistency across environments. Docker
+          allows us to containerize the Laravel application, simplifying the
+          handling of dependencies and infrastructure. By integrating this setup
+          with CI/CD practices, developers can automate testing, building, and
+          deploying new code changes with ease and reliability.
+        </p>
+        <p>
+          Moreover, using an Ubuntu server provides a stable and secure
+          environment, while Docker’s lightweight containers boost efficiency
+          and scalability. This approach helps maintain code quality, reduces
+          the chances of human error during deployments, and accelerates the
+          overall software delivery process, making it an essential toolset for
+          modern web development teams.
+        </p>
+        <div>
+          <p>For questions and queries please reach via below email</p>
+
+          <div
+            class="flex text-green-600 space-x-2 items-center hover:underline"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+              />
+            </svg>
+            <a href="mailto:iamsreepathi@gmail.com">Email</a>
+          </div>
+        </div>
+      </section>
+      <section class="space-y-2">
+        <h2 class="text-2xl font-semibold text-green-700">Author</h2>
+        <div>
+          <p>Prashanth Sreepathi</p>
+          <p>
+            <a
+              class="text-green-600 hover:underline"
+              href="mailto:iamsreepathi@gmail.com"
+              >iamsreepathi@gmail.com</a
+            >
+          </p>
+          <p>
+            <a
+              class="text-green-600 hover:underline"
+              href="https://reddyprashanth.github.io/"
+              target="_blank"
+              >visit my portfolio</a
+            >
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="p-4 text-white text-center border border-t shadow-md">
+      <p class="text-orange-500 font-medium">
+        &copy; 2024 reddyprashanth.github.io
+      </p>
+    </footer>
+  </body>
+</html>
