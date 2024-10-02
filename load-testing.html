@@ -172,9 +172,9 @@
           </p>
           <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
-git clone https://github.com/ReddyPrashanth/product-inventory.git
-cd product-inventory
-npm install
+  git clone https://github.com/ReddyPrashanth/product-inventory.git
+  cd product-inventory
+  npm install
             </code></pre>
           </div>
         </div>
@@ -192,45 +192,45 @@ npm install
           </p>
           <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
-cd product-inventory
+  cd product-inventory
 
-# Add below env variables into a .env file in root folders
-|------------------------------------|
-# App
-APP_NAME='Product Inventory'
-APP_URL=http://localhost:3000
-APP_ENV=local
-API_GATEWAY_PORT=3000
+  # Add below env variables into a .env file in root folders
+  |------------------------------------|
+  # App
+  APP_NAME='Product Inventory'
+  APP_URL=http://localhost:3000
+  APP_ENV=local
+  API_GATEWAY_PORT=3000
 
-# Database
-DB_HOST=mysql
-DB_PORT=3306
-DB_DATABASE=laravel
-DB_USER=laravel
-DB_PASSWORD=secret
+  # Database
+  DB_HOST=mysql
+  DB_PORT=3306
+  DB_DATABASE=laravel
+  DB_USER=laravel
+  DB_PASSWORD=secret
 
-# RabbitMQ
-RABBITMQ_PASS=secret
-RABBITMQ_USER=admin
-RABBITMQ_VHOST=default
-QUEUE_URI='amqp://admin:secret@rabbitmq:5672/default'
-|------------------------------------|
+  # RabbitMQ
+  RABBITMQ_PASS=secret
+  RABBITMQ_USER=admin
+  RABBITMQ_VHOST=default
+  QUEUE_URI='amqp://admin:secret@rabbitmq:5672/default'
+  |------------------------------------|
 
-# Copy .env file into src directory
-cp .env src/.env
+  # Copy .env file into src directory
+  cp .env src/.env
 
-# Start your services using docker compose
-docker compose up -d
+  # Start your services using docker compose
+  docker compose up -d
 
-# Check all services are started using below command and healthy
-docker ps
+  # Check all services are started using below command and healthy
+  docker ps
 
-# Additionally you can check logs for each service using below docker compose command in case you run into an issue
-docker compose logs api-gateway
-docker compose logs products
-docker compose logs inventory
-docker compose logs mysql
-docker compose logs rabbitmq
+  # Additionally you can check logs for each service using below docker compose command in case you run into an issue
+  docker compose logs api-gateway
+  docker compose logs products
+  docker compose logs inventory
+  docker compose logs mysql
+  docker compose logs rabbitmq
               </code></pre>
           </div>
         </div>
@@ -341,8 +341,8 @@ docker compose logs rabbitmq
           </p>
           <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
-# runs prouct list load test 
-docker compose run --rm -i k6 run products-index.js 
+  # runs prouct list load test 
+  docker compose run --rm -i k6 run products-index.js 
             </code></pre>
           </div>
         </div>
@@ -405,7 +405,7 @@ default ✓ [======================================] 00/20 VUs  1m0s
           </h4>
           <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
-http_reqs..............: 600  20.00/s
+  http_reqs..............: 600  20.00/s
             </code></pre>
           </div>
           <p>
@@ -459,8 +459,8 @@ vus_max.................: 20
           <h4 class="font-medium text-orange-500">Throughput Metrics</h4>
           <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
             <pre><code class="whitespace-pre text-sm">
-data_received..........: 100 KB  3.33 KB/s
-data_sent..............: 50 KB   1.67 KB/s 
+  data_received..........: 100 KB  3.33 KB/s
+  data_sent..............: 50 KB   1.67 KB/s 
             </code></pre>
           </div>
           <p>
@@ -516,12 +516,12 @@ data_sent..............: 50 KB   1.67 KB/s
               >iamsreepathi@gmail.com</a
             >
           </p>
-          <p>
+          <p class="mt-2">
             <a
-              class="text-green-600 hover:underline"
-              href="https://reddyprashanth.github.io/"
+              class="border border-green-600 rounded font-semibold py-1 px-2 text-green-600 hover:bg-green-600 hover:text-white"
+              href="/"
               target="_blank"
-              >visit my portfolio</a
+              >Visit My Portfolio &rarr;</a
             >
           </p>
         </div>
