@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Articles | Application Monitoring</title>
+    <link rel="icon" href="./assets/images/favicon.ico" type="image/x-icon" />
+    <link href="./assets/css/tailwind.css" rel="stylesheet" />
+  </head>
+  <body class="text-gray-900 text-justify">
+    <header class="p-4 text-green-700 text-center space-y-2 border-b shadow-sm">
+      <h1 class="text-4xl font-bold">
+        Application Monitoring Using Prometheus and Grafana
+      </h1>
+      <p class="text-orange-500 font-medium">
+        Built with Laravel, Docker, Prometheus and Grafana
+      </p>
+    </header>
+
+    <main class="p-6 container mx-auto space-y-2">
+      <section class="mb-4">
+        <a
+          class="border border-green-800 rounded font-semibold py-1 px-2 text-green-800 hover:bg-green-800 hover:text-white"
+          href="/articles"
+          >List of Articles &rarr;</a
+        >
+      </section>
+      <section class="mb-4">
+        <h2 class="text-2xl font-semibold mb-4 text-green-700">
+          Table Of Contents
+        </h2>
+        <ul class="list-disc list-inside font-medium text-green-600 space-y-1">
+          <li>
+            <a class="hover:underline" href="#introduction">Introduction</a>
+          </li>
+          <li>
+            <a class="hover:underline" href="#monitoring-setup"
+              >Monitoring Setup</a
+            >
+            <ul class="list-disc list-inside ml-6 space-y-1">
+              <li class="font-normal">
+                <a class="hover:underline" href="#prerequisites"
+                  >Prerequisites</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#why">Why This Stack?</a>
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#code-setup">Code Setup</a>
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#configure-docker-compose"
+                  >Docker Compose Setup</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#configure-prometheus"
+                  >Configure Prometheus</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#configure-alertmanager"
+                  >Configure Alertmanager</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#alert-rules">Add Alerts</a>
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#start-services"
+                  >Start The Stack</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#grafana-dashboard"
+                  >Grafana Dashboard</a
+                >
+              </li>
+              <li class="font-normal">
+                <a class="hover:underline" href="#verify-alerts"
+                  >Verify Alerts</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li><a class="hover:underline" href="#conclusion">Conclusion</a></li>
+        </ul>
+      </section>
+      <section id="introduction" class="space-y-4">
+        <h2 class="text-2xl font-semibold text-green-700">Introduction</h2>
+        <p>
+          Monitoring is an essential aspect of any production application. It
+          helps you track the health, performance, and reliability of your
+          application in real-time. In this article, we will walk through how to
+          set up monitoring for a Laravel application using Node Exporter,
+          Blackbox Exporter, Prometheus, Grafana, and Alertmanager.
+        </p>
+        <p>
+          With this setup, you will be able to monitor both your server metrics
+          (like CPU, memory usage, etc.) and your application’s HTTP endpoints,
+          visualize the data using Grafana dashboards, and set up alerting for
+          issues like downtime or resource exhaustion.
+        </p>
+      </section>
+      <section id="monitoring-setup" class="space-y-4">
+        <h3 class="text-2xl font-semibold mt-6 mb-4 text-green-700">
+          Application Monitoring Setup
+        </h3>
+        <div id="prerequisites" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Prerequisites</h4>
+          <ul class="list-disc list-inside space-y-1">
+            <li>Docker and Docker Compose installed on your local machine.</li>
+            <li>
+              A Laravel application running on local development using docker.
+            </li>
+            <li>Git installed on local machine.</li>
+          </ul>
+        </div>
+        <div id="why" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Why This Stack?</h4>
+          <ul class="list-disc list-inside space-y-1">
+            <li>
+              <span class="font-semibold">Prometheus:</span> An open-source
+              systems monitoring and alerting toolkit. It collects metrics from
+              configured targets at given intervals.
+            </li>
+            <li>
+              <span class="font-semibold">Node Exporter:</span> Exposes hardware
+              and operating system metrics, such as CPU usage, memory, and disk
+              space.
+            </li>
+            <li>
+              <span class="font-semibold">Blackbox Exporter:</span> Probes
+              external endpoints to monitor their availability and performance.
+            </li>
+            <li>
+              <span class="font-semibold">Grafana:</span> A visualization tool
+              to display data from Prometheus in user-friendly dashboards.
+            </li>
+            <li>
+              <span class="font-semibold">Alertmanager:</span> Sends alerts
+              based on the conditions defined in Prometheus, allowing you to
+              receive notifications in email, Slack, etc.
+            </li>
+          </ul>
+        </div>
+        <div id="code-setup" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Code Setup</h4>
+          <p>
+            All the code for this demo is available in the Github code
+            repository
+            <a
+              href="https://github.com/ReddyPrashanth/laravel-monitoring"
+              target="_blank"
+              class="text-orange-500 hover:underline"
+              >here</a
+            >. Clone the repository by using below command.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  # clone git repository
+  git clone https://github.com/ReddyPrashanth/laravel-monitoring.git 
+  cd laravel-monitoring
+            </code></pre>
+          </div>
+        </div>
+        <div id="configure-docker-compose" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Docker Compose Setup</h4>
+          <p>
+            To make the setup easier, we will use Docker Compose to run all our
+            services (Prometheus, Node Exporter, Blackbox Exporter, Grafana, and
+            Alertmanager). Our demo code contains a
+            <span
+              class="text-sm font-semibold text-gray-600 bg-gray-100 p-1 rounded"
+              >docker-compose.yml</span
+            >
+            file with the following content:
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+    x-app-environment: &appEnvironment
+        APP_NAME: ${APP_NAME}
+        APP_URL: ${APP_URL}
+        APP_KEY: ${APP_KEY}
+        APP_DEBUG: ${APP_DEBUG}
+        APP_ENV: ${APP_ENV}
+        DB_CONNECTION: ${DB_CONNECTION}
+        DB_HOST: ${DB_HOST}
+        DB_PORT: ${DB_PORT}
+        DB_DATABASE: ${DB_DATABASE}
+        DB_USERNAME: ${DB_USERNAME}
+        DB_PASSWORD: ${DB_PASSWORD}
+        SESSION_DRIVER: ${SESSION_DRIVER}
+        SESSION_LIFETIME: ${SESSION_LIFETIME}
+        SESSION_ENCRYPT: ${SESSION_ENCRYPT}
+        SESSION_PATH: ${SESSION_PATH}
+        SESSION_DOMAIN: ${SESSION_DOMAIN}
+        BROADCAST_CONNECTION: ${BROADCAST_CONNECTION}
+        FILESYSTEM_DISK: ${FILESYSTEM_DISK}
+        QUEUE_CONNECTION: ${QUEUE_CONNECTION}
+        
+        x-database-environment: &databaseEnvironment
+        MYSQL_DATABASE: ${DB_DATABASE}
+        MYSQL_USER: ${DB_USERNAME}
+        MYSQL_PASSWORD: ${DB_PASSWORD}
+        MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+        SERVICE_TAGS: dev
+        SERVICE_NAME: mysql
+        
+    networks:
+        cicd:
+        
+    volumes:
+        db_data:
+            driver: local
+        grafana_data:
+            driver: local
+        
+    services:
+        mysql:
+            image: mariadb:10.6
+            restart: unless-stopped
+            tty: true
+            ports:
+            - "3307:3306"
+            healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            interval: 10s
+            timeout: 10s
+            retries: 3
+            environment:
+            <<: [*databaseEnvironment]
+            volumes:
+            - db_data:/var/lib/mysql
+            networks:
+            - cicd
+        
+        app:
+            build:
+            context: .
+            dockerfile: php.dockerfile
+            ports:
+            - "80:80"
+            volumes:
+            - ./src:/var/www/html:delegated
+            networks:
+            - cicd
+            depends_on:
+            mysql:
+                condition: service_healthy
+            environment:
+            <<: [*appEnvironment]
+        
+        # Prometheus service
+        prometheus:
+            image: prom/prometheus:latest
+            container_name: prometheus
+            volumes:
+            - ./conf/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+            - ./conf/prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml
+            ports:
+            - "9090:9090" # Expose Prometheus on port 9090
+            networks:
+            - cicd
+        
+        # Grafana service
+        grafana:
+            image: grafana/grafana:latest
+            container_name: grafana
+            environment:
+            - GF_SECURITY_ADMIN_PASSWORD=admin
+            ports:
+            - "3000:3000" # Expose Grafana on port 3000
+            networks:
+            - cicd
+            volumes:
+            - grafana_data
+        
+        # Node Exporter service
+        node-exporter:
+            image: prom/node-exporter:latest
+            container_name: node-exporter
+            ports:
+            - "9100:9100" # Expose Node Exporter on port 9100
+            networks:
+            - cicd
+        
+        # Blackbox Exporter service
+        blackbox-exporter:
+            image: prom/blackbox-exporter:latest
+            container_name: blackbox-exporter
+            ports:
+            - "9115:9115" # Expose Blackbox Exporter on port 9115
+            networks:
+            - cicd
+        
+        alertmanager:
+            image: prom/alertmanager:latest
+            container_name: alertmanager
+            volumes:
+            - ./conf/prometheus/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+            command:
+            - "--config.file=/etc/alertmanager/alertmanager.yml"
+            ports:
+            - 9093:9093
+            networks:
+            - cicd       
+            </code></pre>
+          </div>
+        </div>
+        <div id="configure-prometheus" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Configure Prometheus</h4>
+          <p>
+            Configure Prometheus to scrape metrics from Node Exporter, Blackbox
+            Exporter, and itself. I have placed a
+            <span
+              class="text-sm font-semibold text-gray-600 bg-gray-100 p-1 rounded"
+              >prometheus.yml</span
+            >
+            configuration file file under
+            <span
+              class="text-sm font-semibold text-gray-600 bg-gray-100 p-1 rounded"
+              >conf/prometheus</span
+            >
+            folder.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+                # prometheus/prometheus.yml
+    global:
+        scrape_interval: 15s # How often to scrape targets
+        evaluation_interval: 15s # How often to evaluate rules
+    
+    rule_files:
+        - /etc/prometheus/alert.rules.yml # Path to alert rules
+    
+    alerting:
+        alertmanagers:
+        - static_configs:
+            - targets: ["alertmanager:9093"]
+    
+    scrape_configs:
+        # Scrape the Prometheus itself
+        - job_name: "prometheus"
+        static_configs:
+            - targets: ["prometheus:9090"]
+    
+        # Scrape Node Exporter (System Metrics)
+        - job_name: "node-exporter"
+        static_configs:
+            - targets: ["node-exporter:9100"]
+    
+        # Scrape Blackbox Exporter (API Monitoring)
+        - job_name: "blackbox"
+        metrics_path: /probe
+        params:
+            module: [http_2xx] # Monitor HTTP status codes 200-299
+        static_configs:
+            - targets:
+                # Replace with your API URL
+                - http://app:80/up
+        relabel_configs:
+            - source_labels: [__address__]
+            target_label: __param_target
+            - source_labels: [__param_target]
+            target_label: instance
+            - target_label: __address__
+            replacement: blackbox-exporter:9115 # Blackbox Exporter target
+            </code></pre>
+          </div>
+          <p>Here:</p>
+          <ul class="list-disc list-inside space-y-1">
+            <li>Node Exporter scrapes system metrics.</li>
+            <li>
+              Blackbox Exporter monitors the health of the Laravel app by
+              checking the /health endpoint.
+            </li>
+            <li>Prometheus scrapes itself to monitor its own performance.</li>
+          </ul>
+        </div>
+        <div id="configure-alertmanager" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Configure Alertmanager</h4>
+          <p>
+            Now, let's configure Alertmanager to handle alerts and send
+            notifications to a specified channel (e.g., email or Slack). I have
+            created an
+            <span
+              class="text-sm font-semibold text-gray-600 bg-gray-100 p-1 rounded"
+              >alertmanager.yml</span
+            >file inside the
+            <span
+              class="text-sm font-semibold text-gray-600 bg-gray-100 p-1 rounded"
+              >conf/prometheus</span
+            >
+            folder.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  global:
+    resolve_timeout: 5m # How long to wait before resolving an alert
+  
+  route:
+    receiver: "email_notifications"
+    group_wait: 30s
+    group_interval: 5m
+    repeat_interval: 3h
+  
+  receivers:
+    - name: "email_notifications"
+      email_configs:
+        - to: "TO_ADDRESS"
+          from: "FROM_ADDRESS"
+          smarthost: "MAIL_HOST"
+          auth_username: "MAIL_USERNAME"
+          auth_password: "MAIL_PASSWORD"
+          require_tls: false #Use this for local development
+              </code></pre>
+          </div>
+        </div>
+        <div id="alert-rules" class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            Add Alert Rules for Prometheus
+          </h4>
+          <p>
+            Define alert rules for Prometheus. For example, if CPU usage goes
+            above 90%, or if the Laravel app's health endpoint is unreachable.
+            Create an
+            <span
+              class="text-sm font-semibold text-gray-600 bg-gray-100 p-1 rounded"
+              >alert.rules.yml</span
+            >
+            file inside the
+            <span
+              class="text-sm font-semibold text-gray-600 bg-gray-100 p-1 rounded"
+              >conf/prometheus</span
+            >folder.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  groups:
+    - name: node_exporter_alerts
+      rules:
+        # Alert for High CPU Usage
+        - alert: HighCPUUsage
+          expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High CPU usage on {{ $labels.instance }}"
+            description: "CPU usage has been over 90% for more than 5 minutes."
+  
+        # Alert for Low Available Memory
+        - alert: LowMemory
+          expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 10
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Low memory available on {{ $labels.instance }}"
+            description: "Less than 10% of memory available for more than 5 minutes."
+  
+    - name: blackbox_exporter_alerts
+      rules:
+        # Alert for API Unavailability
+        - alert: APIEndpointDown
+          expr: probe_success == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "API Endpoint Down"
+            description: "The API endpoint at {{ $labels.instance }} is down."
+  
+        # Alert for High Response Time
+        - alert: HighResponseTime
+          expr: probe_duration_seconds > 5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High Response Time for {{ $labels.instance }}"
+            description: "The response time for {{ $labels.instance }} has been greater than 1 second for more than 5 minutes."
+                  </code></pre>
+          </div>
+        </div>
+        <div id="start-services" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Start the Stack</h4>
+          <p>
+            Now that the configuration is done, you can bring up the services
+            using Docker Compose. Below command will launch Prometheus, Node
+            Exporter, Blackbox Exporter, Grafana, and Alertmanager.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  docker compose up -d
+                    </code></pre>
+          </div>
+          <p>List of services:</p>
+          <ul class="list-disc list-inside space-y-1">
+            <li>
+              Laravel app will run on
+              <a
+                class="hover:underline text-orange-500"
+                href="http://localhost"
+                target="_blank"
+                >http://localhost</a
+              >
+            </li>
+            <li>
+              Prometheus will run on
+              <a
+                class="hover:underline text-orange-500"
+                href="http://localhost:9090"
+                target="_blank"
+                >http://localhost:9090</a
+              >
+            </li>
+            <li>
+              Grafana will run on
+              <a
+                class="hover:underline text-orange-500"
+                href="http://localhost:3000"
+                target="_blank"
+                >http://localhost:3000</a
+              >
+            </li>
+            <li>
+              Alertmanager will run on
+              <a
+                class="hover:underline text-orange-500"
+                href="http://localhost:9093"
+                target="_blank"
+                >http://localhost:9093</a
+              >
+            </li>
+            <li>
+              Node exporter will run on
+              <a
+                class="hover:underline text-orange-500"
+                href="http://localhost:9100"
+                target="_blank"
+                >http://localhost:9100</a
+              >
+            </li>
+            <li>
+              Blackbox exporter will run on
+              <a
+                class="hover:underline text-orange-500"
+                href="http://localhost:9115"
+                target="_blank"
+                >http://localhost:9115</a
+              >
+            </li>
+          </ul>
+          <ul class="space-y-4">
+            <li>
+              <img
+                class="rounded"
+                src="./assets/images/laravel-app.jpg"
+                alt="Laravel App"
+              />
+            </li>
+            <li>
+              <img
+                class="rounded"
+                src="./assets/images/prometheus.jpg"
+                alt="Prometheus"
+              />
+            </li>
+            <li>
+              <img
+                class="rounded"
+                src="./assets/images/grafana.jpg"
+                alt="Grafana"
+              />
+            </li>
+            <li>
+              <img
+                class="rounded"
+                src="./assets/images/alertmanager-dashboard-empty.jpg"
+                alt="Alertmanager"
+              />
+            </li>
+          </ul>
+        </div>
+        <div id="grafana-dashboard" class="space-y-2">
+          <h4 class="font-medium text-orange-500">
+            Configure Grafana Dashboards
+          </h4>
+          <ul class="list-disc list-inside space-y-2">
+            <li>
+              Open Grafana at http://localhost:3000 and log in with the
+              credentials (default admin/admin).
+              <img
+                class="rounded mt-2"
+                src="./assets/images/grafana.jpg"
+                alt="Grafana"
+              />
+            </li>
+            <li>
+              Add Prometheus as a data source:
+              <ul class="list-disc list-inside ml-6 space-y-2">
+                <li>
+                  Navigate to Configuration > Data Sources.
+                  <img
+                    class="mt-2 rounded"
+                    src="./assets/images/data-source-menu.jpg"
+                    alt="Data Source Menu"
+                  />
+                </li>
+                <li>
+                  Add a new data source and choose Prometheus.
+                  <img
+                    class="mt-2 rounded"
+                    src="./assets/images/data-source.jpg"
+                    alt="Data Source"
+                  />
+                </li>
+                <li>
+                  Set the URL to http://prometheus:9090 and click save button at
+                  the bottom.
+                </li>
+              </ul>
+            </li>
+            <li>
+              Import pre-built dashboards for Node Exporter:
+              <ul class="list-disc list-inside">
+                <li>
+                  Go to Create > Import and use Dashboard ID 1860 for Node
+                  Exporter metrics.
+                  <img
+                    class="mt-2 rounded"
+                    src="./assets/images/node-exporter-import.jpg"
+                    alt="Import Node Export Dashboard"
+                  />
+                  <img
+                    class="mt-2 rounded"
+                    src="./assets/images/node-exporter-dashboard.jpg"
+                    alt="Node Export Dashboard"
+                  />
+                </li>
+              </ul>
+            </li>
+            <li>
+              Create a custom dashboard to visualize your Laravel app's health
+              endpoint using data from Blackbox Exporter.
+              <img
+                class="mt-2 rounded"
+                src="./assets/images/blackbox-import.jpg"
+                alt="Import Blackbox Exporter Dashboard"
+              />
+              <img
+                class="mt-2 rounded"
+                src="./assets/images/blackbox-dashboard.jpg"
+                alt="Blackbox Exporter Dashboard"
+              />
+            </li>
+          </ul>
+        </div>
+        <div id="verify-alerts" class="space-y-2">
+          <h4 class="font-medium text-orange-500">Verify Alerts</h4>
+          <p>
+            You can check active alerts in the Prometheus UI at
+            http://localhost:9090/alerts.
+            <img
+              class="mt-2 rounded"
+              src="./assets/images/alertmanager-dashboard-empty.jpg"
+              alt="Alertmanager Dashboard"
+            />
+          </p>
+          <p>Test the alerts by:</p>
+          <ul class="list-disc list-inside space-y-1">
+            <li>
+              Simulating high CPU usage or resource exhaustion on the server.
+            </li>
+            <li>
+              Bringing down the Laravel application to test the downtime alert.
+            </li>
+          </ul>
+          <p>
+            You should receive an email (or notification on your preferred
+            platform) when the alerts are triggered.
+          </p>
+          <p>
+            Bring down the Laravel application using below command. Once the
+            application is down you should receive an email notification.
+          </p>
+          <div class="rounded bg-gray-800 text-gray-300 px-4 overflow-x-auto">
+            <pre><code class="whitespace-pre text-sm">
+  # This will bring laravel application into maintenance mode
+  docker compose exec app php artisan down
+            </code></pre>
+          </div>
+          <ul class="list-none space-y-2">
+            <li>
+              <img
+                class="mt-2 rounded"
+                src="./assets/images/app-unavailable.jpg"
+                alt="Application Down"
+              />
+            </li>
+            <li>
+              <img
+                class="mt-2 rounded"
+                src="./assets/images/alertmanager-dashboard.jpg"
+                alt="Alertmanager Alerts"
+              />
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section id="conclusion" class="space-y-4">
+        <h2 class="text-2xl font-semibold mb-4 text-green-700">Conclusion</h2>
+        <p>
+          By setting up Prometheus, Node Exporter, Blackbox Exporter, Grafana,
+          and Alertmanager, you now have a powerful monitoring system for your
+          Laravel application and server infrastructure. This stack will help
+          you proactively monitor resource usage, performance issues, and
+          application availability, while providing real-time alerts and
+          insightful visualizations for better decision-making.
+        </p>
+        <p>
+          This setup is highly extensible, and you can continue to add more
+          exporters (e.g., database exporters, Redis exporters) or set up
+          additional alerts as your application grows.
+        </p>
+        <div>
+          <p>For questions and queries please reach via below email</p>
+
+          <div
+            class="flex text-green-600 space-x-2 items-center hover:underline"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+              />
+            </svg>
+            <a href="mailto:iamsreepathi@gmail.com">Email</a>
+          </div>
+        </div>
+      </section>
+      <section class="space-y-2">
+        <h2 class="text-2xl font-semibold text-green-700">Author</h2>
+        <div>
+          <p>Prashanth Sreepathi</p>
+          <p>
+            <a
+              class="text-green-600 hover:underline"
+              href="mailto:iamsreepathi@gmail.com"
+              >iamsreepathi@gmail.com</a
+            >
+          </p>
+          <p class="mt-2">
+            <a
+              class="border border-green-600 rounded font-semibold py-1 px-2 text-green-600 hover:bg-green-600 hover:text-white"
+              href="/"
+              target="_blank"
+              >Visit My Portfolio &rarr;</a
+            >
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="p-4 text-white text-center border border-t shadow-md">
+      <p class="text-orange-500 font-medium">
+        &copy; 2024 reddyprashanth.github.io
+      </p>
+    </footer>
+  </body>
+</html>
